@@ -1,0 +1,40 @@
+app = "ap-assist-agent"
+primary_region = "sjc"
+
+[build]
+dockerfile = "Dockerfile"
+
+[env]
+NODE_ENV = "production"
+NODE_OPTIONS = "--max-old-space-size=1536"
+
+[http_service]
+internal_port = 3000
+force_https = true
+auto_stop_machines = false
+auto_start_machines = true
+min_machines_running = 1
+
+[[vm]]
+size = "shared-cpu-2x"
+memory = "2048mb"
+
+[[mounts]]
+source = "bot_data"
+destination = "/data"
+
+[[restart]]
+policy = "always"
+retries = 5
+
+[checks]
+[checks.health]
+type = "http"
+port = 3000
+path = "/health"
+interval = "30s"
+timeout = "10s"
+grace_period = "90s"
+
+kill_signal = "SIGTERM"
+kill_timeout = "30s"

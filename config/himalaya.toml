@@ -1,0 +1,20 @@
+[accounts.gmail]
+email = "arpowers@gmail.com"
+display-name = "Andrew Powers"
+default = true
+
+backend.type = "imap"
+backend.host = "imap.gmail.com"
+backend.port = 993
+backend.encryption.type = "tls"
+backend.login = "arpowers@gmail.com"
+backend.auth.type = "password"
+backend.auth.cmd = "echo $GMAIL_APP_PASSWORD"
+
+message.send.backend.type = "smtp"
+message.send.backend.host = "smtp.gmail.com"
+message.send.backend.port = 465
+message.send.backend.encryption.type = "tls"
+message.send.backend.login = "arpowers@gmail.com"
+message.send.backend.auth.type = "password"
+message.send.backend.auth.cmd = "echo $GMAIL_APP_PASSWORD"

@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment (keep .env.example)
+.env
+.env.local
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OpenClaw runtime state (created when running locally)
+agents/
+credentials/
+*.lock
+
+# Session transcripts (may contain private conversations)
+# Keep sessions.json index, exclude actual transcripts
+workspace/memory/*.jsonl
+
+# Finance exports (sensitive)
+workspace/finance/*.csv
+
+# Logs
+*.log
