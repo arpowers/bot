@@ -1,7 +1,4 @@
 {
-  // OpenClaw Gateway Configuration
-  // Docs: https://docs.openclaw.ai/gateway/configuration
-
   "gateway": {
     "mode": "local",
     "port": 3000,
