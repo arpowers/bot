@@ -20,7 +20,7 @@ size = "shared-cpu-2x"
 memory = "2048mb"
 
 [[mounts]]
-source = "bot_data"
+source = "clawdbot_data"
 destination = "/data"
 
 [[restart]]
