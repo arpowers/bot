@@ -10,7 +10,15 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# OpenClaw runtime state (created when running locally)
+# OpenClaw state (in repo but sensitive files ignored)
+.openclaw/agents/*/auth-profiles.json
+.openclaw/credentials/
+.openclaw/identity/
+.openclaw/*.lock
+.openclaw/cron/
+.openclaw/telegram/
+
+# Legacy (if running from wrong dir)
 agents/
 credentials/
 cron/

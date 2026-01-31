@@ -1,0 +1,70 @@
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "anthropic/claude-opus-4-5",
+        "fallbacks": [
+          "anthropic/claude-sonnet-4-5",
+          "google/gemini-2.0-flash"
+        ]
+      },
+      "workspace": "./workspace",
+      "compaction": {
+        "memoryFlush": {
+          "enabled": true,
+          "softThresholdTokens": 4000
+        }
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true
+  },
+  "session": {
+    "scope": "per-sender",
+    "reset": {
+      "mode": "idle",
+      "idleMinutes": 240
+    }
+  },
+  "channels": {
+    "telegram": {
+      "dmPolicy": "pairing",
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "groupPolicy": "allowlist",
+      "streamMode": "partial"
+    }
+  },
+  "gateway": {
+    "port": 3000,
+    "mode": "local",
+    "bind": "lan",
+    "auth": {
+      "token": "${GATEWAY_TOKEN}"
+    }
+  },
+  "skills": {
+    "load": {
+      "extraDirs": ["./skills"]
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "talk": {
+    "apiKey": "${ELEVENLABS_API_KEY}"
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  }
+}
