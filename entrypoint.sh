@@ -16,7 +16,7 @@ node -e "
 
   // Override paths for production
   config.agents.defaults.workspace = '/app/workspace';
-  config.skills.load.extraDirs = ['/app/skills'];
+  config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
 
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
   console.log('Config updated for production');
@@ -41,6 +41,13 @@ EOF
   sleep 2
   echo "Google Drive mounted"
   ls -la /app/workspace/ 2>/dev/null || echo "Workspace empty"
+
+  # Copy bot-editable configs from workspace
+  if [ -f /app/workspace/mcporter.json ]; then
+    mkdir -p /app/config
+    cp /app/workspace/mcporter.json /app/config/mcporter.json
+    echo "Loaded mcporter.json from workspace"
+  fi
 else
   echo "WARNING: No Google Drive - workspace won't persist!"
 fi

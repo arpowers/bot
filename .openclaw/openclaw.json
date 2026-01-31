@@ -1,16 +1,4 @@
 {
-  "mcp": {
-    "servers": {
-      "twenty": {
-        "command": "npx",
-        "args": ["-y", "@mhenry3164/twenty-crm-mcp-server"],
-        "env": {
-          "TWENTY_API_KEY": "${TWENTY_API_KEY}",
-          "TWENTY_API_URL": "${TWENTY_API_URL}"
-        }
-      }
-    }
-  },
   "agents": {
     "defaults": {
       "model": {
@@ -66,7 +54,7 @@
   },
   "skills": {
     "load": {
-      "extraDirs": ["./skills"]
+      "extraDirs": ["./skills", "./workspace/skills"]
     }
   },
   "messages": {
