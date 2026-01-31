@@ -41,10 +41,37 @@ node -e "
   console.log('Config written to /data/openclaw.json');
 "
 
-# Sync workspace files from repo to volume (newer files win)
-# This brings in any locally-developed memory/config from the repo
-rsync -av --update /app/workspace/ /data/workspace/ 2>/dev/null || \
-  cp -r /app/workspace/* /data/workspace/ 2>/dev/null || true
+# Mount Google Drive for shared workspace (if configured)
+if [ -n "$RCLONE_CONFIG_GDRIVE_TOKEN" ]; then
+  echo "Mounting Google Drive workspace..."
+  mkdir -p /data/workspace
+
+  # Create rclone config from env vars
+  mkdir -p /root/.config/rclone
+  cat > /root/.config/rclone/rclone.conf << EOF
+[gdrive]
+type = drive
+client_id = ${GOOGLE_OAUTH_CLIENT_ID}
+client_secret = ${GOOGLE_OAUTH_CLIENT_SECRET}
+token = ${RCLONE_CONFIG_GDRIVE_TOKEN}
+root_folder_id =
+EOF
+
+  # Mount Google Drive folder
+  rclone mount gdrive:ari-bot/workspace /data/workspace \
+    --vfs-cache-mode full \
+    --vfs-cache-max-age 1m \
+    --allow-other \
+    --daemon
+
+  sleep 2
+  echo "Google Drive mounted at /data/workspace"
+else
+  echo "No Google Drive config, using local workspace..."
+  # Fallback: sync from repo
+  rsync -av --update /app/workspace/ /data/workspace/ 2>/dev/null || \
+    cp -r /app/workspace/* /data/workspace/ 2>/dev/null || true
+fi
 
 # Clear stale locks
 find /data -name "*.lock" -delete 2>/dev/null || true

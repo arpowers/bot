@@ -1,7 +1,8 @@
 FROM node:22-slim
 
-# Install tini for proper signal handling + git for skills + rsync for workspace sync
-RUN apt-get update && apt-get install -y git curl tini rsync && rm -rf /var/lib/apt/lists/* \
+# Install tini for proper signal handling + git for skills + rclone for Google Drive sync
+RUN apt-get update && apt-get install -y git curl tini rsync fuse3 && rm -rf /var/lib/apt/lists/* \
+    && curl https://rclone.org/install.sh | bash \
     && npm install -g openclaw@latest
 
 WORKDIR /app
