@@ -20,6 +20,14 @@
         "GOOGLE_OAUTH_CLIENT_ID": "${GOOGLE_OAUTH_CLIENT_ID}",
         "GOOGLE_OAUTH_CLIENT_SECRET": "${GOOGLE_OAUTH_CLIENT_SECRET}"
       }
+    },
+    "twenty": {
+      "command": "npx",
+      "args": ["-y", "twenty-crm-mcp-server"],
+      "env": {
+        "TWENTY_API_KEY": "${TWENTY_API_KEY}",
+        "TWENTY_API_URL": "${TWENTY_API_URL}"
+      }
     }
   },
   "imports": []
