@@ -28,6 +28,16 @@ bot/
 - **Config:** JSON5 in `config/openclaw.json`
 - **Secrets:** Environment variables, never in config
 
+## Authentication (IMPORTANT)
+
+**ALWAYS use Claude Max OAuth tokens, NEVER raw Anthropic API keys.**
+
+- Claude Max subscription provides OAuth tokens (`sk-ant-oat01-...`)
+- Raw API keys (`sk-ant-api03-...`) are pay-per-use and expensive
+- To get OAuth token: `openclaw configure --section model` → select Claude Max
+- Set on Fly.io: `fly secrets set ANTHROPIC_API_KEY="sk-ant-oat01-..." --app ap-assist-agent`
+- The OAuth token goes in the same `ANTHROPIC_API_KEY` env var
+
 ## Workflow
 
 1. Edit skills/config locally
