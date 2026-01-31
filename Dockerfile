@@ -1,7 +1,7 @@
 FROM node:22-slim
 
-# Install tini for proper signal handling + git for skills
-RUN apt-get update && apt-get install -y git curl tini && rm -rf /var/lib/apt/lists/* \
+# Install tini for proper signal handling + git for skills + rsync for workspace sync
+RUN apt-get update && apt-get install -y git curl tini rsync && rm -rf /var/lib/apt/lists/* \
     && npm install -g openclaw@latest
 
 WORKDIR /app
