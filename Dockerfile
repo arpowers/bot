@@ -3,7 +3,7 @@ FROM node:22-slim
 # Install dependencies
 RUN apt-get update && apt-get install -y git curl tini fuse3 unzip && rm -rf /var/lib/apt/lists/* \
     && curl https://rclone.org/install.sh | bash \
-    && npm install -g openclaw@latest
+    && npm install -g openclaw@latest mcporter
 
 WORKDIR /app
 
@@ -13,8 +13,8 @@ COPY .openclaw/ .openclaw/
 # Copy skills
 COPY skills/ skills/
 
-# Create workspace mount point
-RUN mkdir -p workspace
+# Create workspace mount point and config dir
+RUN mkdir -p workspace config
 
 # Copy entrypoint
 COPY entrypoint.sh ./
