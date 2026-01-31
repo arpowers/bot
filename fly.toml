@@ -19,9 +19,7 @@ min_machines_running = 1
 size = "shared-cpu-2x"
 memory = "2048mb"
 
-[[mounts]]
-source = "clawdbot_data"
-destination = "/data"
+# No volume needed - using Google Drive for persistence
 
 [[restart]]
 policy = "always"

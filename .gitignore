@@ -13,14 +13,14 @@ Thumbs.db
 # OpenClaw runtime state (created when running locally)
 agents/
 credentials/
+cron/
+telegram/
 *.lock
+update-check.json
 
-# Session transcripts (may contain private conversations)
-# Keep sessions.json index, exclude actual transcripts
-workspace/memory/*.jsonl
-
-# Finance exports (sensitive)
-workspace/finance/*.csv
+# Workspace is symlinked to Google Drive (not tracked in git)
+workspace
+workspace.bak/
 
 # Logs
 *.log

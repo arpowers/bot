@@ -8,7 +8,7 @@
           "google/gemini-2.0-flash"
         ]
       },
-      "workspace": "/data/workspace",
+      "workspace": "./workspace",
       "compaction": {
         "memoryFlush": {
           "enabled": true,
@@ -51,9 +51,7 @@
   },
   "skills": {
     "load": {
-      "extraDirs": [
-        "/app/skills"
-      ]
+      "extraDirs": ["./skills"]
     }
   },
   "messages": {

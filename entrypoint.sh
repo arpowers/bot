@@ -3,78 +3,67 @@ set -e
 
 cleanup() {
     echo "Received shutdown signal, cleaning up..."
-    pkill -f "npx.*-mcp" 2>/dev/null || true
-    find /data -name "*.lock" -delete 2>/dev/null || true
+    fusermount -u /app/workspace 2>/dev/null || true
+    pkill -f "rclone" 2>/dev/null || true
     echo "Cleanup complete"
     exit 0
 }
 
 trap cleanup 15 2 3
 
-# Volume setup
-chown -R node:node /data
-
-# Set paths - use /data for persistent state, /app for code
-export OPENCLAW_STATE_DIR="/data"
-export BOT_WORKSPACE="/data/workspace"
-export BOT_SKILLS="/app/skills"
-
-# Merge base config with volume config (preserve channels from cloud setup)
-echo "Merging config..."
-node -e "
-  const fs = require('fs');
-  const base = JSON.parse(fs.readFileSync('/app/openclaw.json'));
-  let existing = {};
-  if (fs.existsSync('/data/openclaw.json')) {
-    try {
-      existing = JSON.parse(fs.readFileSync('/data/openclaw.json'));
-      console.log('Read existing config');
-    } catch(e) {
-      console.log('Failed to parse existing config:', e.message);
-    }
-  }
-  const safeFields = ['channels', 'plugins', 'messages'];
-  for (const field of safeFields) {
-    if (existing[field]) base[field] = existing[field];
-  }
-  fs.writeFileSync('/data/openclaw.json', JSON.stringify(base, null, 2));
-  console.log('Config written to /data/openclaw.json');
-"
-
-# Mount Google Drive for shared workspace (if configured)
+# Mount Google Drive for shared workspace
 if [ -n "$RCLONE_CONFIG_GDRIVE_TOKEN" ]; then
   echo "Mounting Google Drive workspace..."
-  mkdir -p /data/workspace
 
-  # Create rclone config from env vars
+  # Create rclone config
   mkdir -p /root/.config/rclone
   cat > /root/.config/rclone/rclone.conf << EOF
 [gdrive]
 type = drive
-client_id = ${GOOGLE_OAUTH_CLIENT_ID}
-client_secret = ${GOOGLE_OAUTH_CLIENT_SECRET}
 token = ${RCLONE_CONFIG_GDRIVE_TOKEN}
-root_folder_id =
 EOF
 
-  # Mount Google Drive folder
-  rclone mount gdrive:ari-bot/workspace /data/workspace \
+  # Mount Google Drive folder as workspace
+  rclone mount gdrive:ari-bot/workspace /app/workspace \
     --vfs-cache-mode full \
     --vfs-cache-max-age 1m \
     --allow-other \
     --daemon
 
   sleep 2
-  echo "Google Drive mounted at /data/workspace"
+  echo "Google Drive mounted at /app/workspace"
+  ls -la /app/workspace/
 else
-  echo "No Google Drive config, using local workspace..."
-  # Fallback: sync from repo
-  rsync -av --update /app/workspace/ /data/workspace/ 2>/dev/null || \
-    cp -r /app/workspace/* /data/workspace/ 2>/dev/null || true
+  echo "WARNING: No Google Drive config, workspace will not persist!"
 fi
 
-# Clear stale locks
-find /data -name "*.lock" -delete 2>/dev/null || true
+# Merge base config with production overrides
+echo "Merging configs..."
+node -e "
+  const fs = require('fs');
+  const base = JSON.parse(fs.readFileSync('/app/openclaw.json'));
+  const prod = JSON.parse(fs.readFileSync('/app/openclaw-prod.json'));
 
-# Run as node user
-exec su node -c 'openclaw gateway run --port 3000 --bind lan --allow-unconfigured'
+  // Deep merge function
+  const merge = (target, source) => {
+    for (const key of Object.keys(source)) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        target[key] = target[key] || {};
+        merge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+    return target;
+  };
+
+  const merged = merge(base, prod);
+  fs.writeFileSync('/app/openclaw-merged.json', JSON.stringify(merged, null, 2));
+  console.log('Config merged to /app/openclaw-merged.json');
+"
+
+# Use merged config
+export OPENCLAW_CONFIG="/app/openclaw-merged.json"
+
+# Run gateway
+exec openclaw gateway run --config /app/openclaw-merged.json --port 3000 --bind lan --allow-unconfigured
