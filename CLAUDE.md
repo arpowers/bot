@@ -2,76 +2,73 @@
 
 Personal AI assistant on OpenClaw. Local dev, cloud deploy.
 
-## Key Files
+## Architecture
+
+```
+Git Repo (version controlled)
+├── openclaw.json          # Base config (relative paths)
+├── openclaw-prod.json     # Production overrides
+├── skills/                # Bot capabilities
+└── workspace → symlink    # Points to Google Drive
+
+Google Drive (shared persistence)
+└── ari-bot/workspace/     # Memory, sessions, runtime data
+    ├── MEMORY.md
+    ├── IDENTITY.md
+    └── ...
+```
+
+## Config System
 
 | File | Purpose |
 |------|---------|
-| `overview.md` | Project hub, status, architecture |
-| `config/openclaw.json` | Gateway configuration |
-| `skills/` | Custom skills (SKILL.md format) |
-| `plans/` | Specs and research |
+| `openclaw.json` | Base config, used by local |
+| `openclaw-prod.json` | Cloud overrides (merged on deploy) |
+| `~/.openclaw/openclaw.json` | Symlink → repo's `openclaw.json` |
 
-## Structure
+## Persistence
 
-```
-bot/
-├── config/openclaw.json    # Symlinked to ~/.openclaw/openclaw.json
-├── skills/                 # Symlinked to ~/.openclaw/skills
-├── memory/                 # Synced from cloud sessions
-├── plans/                  # Specs
-└── .github/workflows/      # Deploy on push
-```
+All runtime data (memory, sessions, etc.) lives on **Google Drive**:
+- **Local**: `workspace/` symlink → `~/Google Drive/ari-bot/workspace/`
+- **Cloud**: rclone mounts same Google Drive folder at `/app/workspace/`
 
-## Conventions
-
-- **Skills:** SKILL.md files with YAML frontmatter
-- **Config:** JSON5 in `config/openclaw.json`
-- **Secrets:** Environment variables, never in config
+Changes sync in real-time between local and cloud.
 
 ## Authentication (IMPORTANT)
 
-**ALWAYS use Claude Max OAuth tokens, NEVER raw Anthropic API keys.**
+**ALWAYS use Claude Max OAuth tokens, NEVER raw API keys.**
 
-- Claude Max subscription provides OAuth tokens (`sk-ant-oat01-...`)
-- Raw API keys (`sk-ant-api03-...`) are pay-per-use and expensive
-- To get OAuth token: `openclaw configure --section model` → select Claude Max
-- Set on Fly.io: `fly secrets set ANTHROPIC_API_KEY="sk-ant-oat01-..." --app ap-assist-agent`
-- The OAuth token goes in the same `ANTHROPIC_API_KEY` env var
+- OAuth tokens: `sk-ant-oat01-...` (subscription-based)
+- Raw API keys: `sk-ant-api03-...` (pay-per-use, expensive)
+- Get token: `claude setup-token`
+- Set on Fly.io: `fly secrets set ANTHROPIC_API_KEY="sk-ant-oat01-..."`
 
 ## Workflow
 
-1. Edit skills/config locally
-2. Test with `openclaw gateway run`
-3. Push to GitHub
-4. GitHub Actions deploys to Fly.io
+1. Edit skills/config in repo
+2. Test locally: `openclaw gateway run`
+3. Push to GitHub → auto-deploys to Fly.io
+4. Memory syncs via Google Drive (no manual sync needed)
 
-## Workspace Sync
+## Telegram Bots
 
-The `workspace/` folder syncs between local and cloud via Git:
+| Bot | Purpose | Token env var |
+|-----|---------|---------------|
+| @ari_local_bot | Local development | `TELEGRAM_TOKEN_LOCAL` |
+| @ari_task_bot | Cloud production | `TELEGRAM_TOKEN_LIVE` |
 
-**Local → Cloud:**
-- Edit workspace files locally (memory, config, etc.)
-- `git commit && git push`
-- Deploy copies newer files to cloud volume
+## Commands
 
-**Cloud → Local:**
-- Cloud bot writes to `/data/workspace`
-- Sync workflow runs every 6 hours (or manual trigger)
-- Commits changes back to repo
-- `git pull` to get cloud changes locally
-
-**Manual sync from cloud:**
 ```bash
-./scripts/sync-memory.sh
+# Run local bot
+openclaw gateway run
+
+# Deploy to cloud
+git push  # GitHub Actions handles it
+
+# Check cloud logs
+fly logs --app ap-assist-agent
+
+# Approve Telegram pairing
+openclaw pairing approve telegram <code>
 ```
-
-## Current Focus
-
-- Lead handling via webhook
-- Email triage
-- Daily analytics/calendar briefing
-- Sales task coaching
-
-## Reference
-
-See `overview.md` for full context.
