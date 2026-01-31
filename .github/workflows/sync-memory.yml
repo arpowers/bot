@@ -1,8 +1,8 @@
-name: Sync Memory
+name: Sync Workspace
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Daily 6am UTC
+    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -11,13 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: superfly/flyctl-action/setup-flyctl@master
+      - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Sync memory from cloud
+      - name: Sync workspace from cloud
         run: |
-          mkdir -p workspace/memory
-          flyctl ssh console -a ap-assist-agent -C "tar czf - /data/agents/default/sessions/ 2>/dev/null || echo 'No sessions yet'" | \
-            tar xzf - -C workspace/memory --strip-components=4 2>/dev/null || true
+          mkdir -p workspace
+          flyctl ssh console -a ap-assist-agent -C "tar czf - -C /data/workspace . 2>/dev/null || echo ''" | \
+            tar xzf - -C workspace 2>/dev/null || echo "No workspace files to sync"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -25,6 +25,6 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add workspace/memory/
-          git diff --staged --quiet || git commit -m "sync: memory $(date +%Y-%m-%d)"
+          git add workspace/
+          git diff --staged --quiet || git commit -m "sync: workspace $(date +%Y-%m-%d-%H%M)"
           git push

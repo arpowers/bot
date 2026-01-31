@@ -1,21 +1,21 @@
 #!/bin/bash
-# Sync memory from cloud to local repo
+# Sync workspace (memory, etc.) from cloud to local repo
 
 set -e
 
 APP="ap-assist-agent"
-LOCAL_DIR="./workspace/memory"
+LOCAL_DIR="./workspace"
 
-echo "Syncing memory from $APP..."
+echo "Syncing workspace from $APP..."
 
 mkdir -p "$LOCAL_DIR"
 
-# Pull session files from cloud
-fly ssh console -a "$APP" -C "tar czf - /data/agents/default/sessions/ 2>/dev/null" | \
-  tar xzf - -C "$LOCAL_DIR" --strip-components=4 2>/dev/null || {
-    echo "No sessions found or error syncing"
+# Pull workspace files from cloud volume
+fly ssh console -a "$APP" -C "tar czf - -C /data/workspace . 2>/dev/null" | \
+  tar xzf - -C "$LOCAL_DIR" 2>/dev/null || {
+    echo "No workspace files found or error syncing"
     exit 0
   }
 
-echo "Memory synced to $LOCAL_DIR"
-ls -la "$LOCAL_DIR/" 2>/dev/null || echo "No sessions yet"
+echo "Workspace synced to $LOCAL_DIR"
+ls -la "$LOCAL_DIR/" 2>/dev/null || echo "Empty workspace"

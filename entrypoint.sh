@@ -41,8 +41,10 @@ node -e "
   console.log('Config written to /data/openclaw.json');
 "
 
-# Copy workspace files to volume (preserves existing session data)
-cp -rn /app/workspace/* /data/workspace/ 2>/dev/null || true
+# Sync workspace files from repo to volume (newer files win)
+# This brings in any locally-developed memory/config from the repo
+rsync -av --update /app/workspace/ /data/workspace/ 2>/dev/null || \
+  cp -r /app/workspace/* /data/workspace/ 2>/dev/null || true
 
 # Clear stale locks
 find /data -name "*.lock" -delete 2>/dev/null || true
