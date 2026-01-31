@@ -45,6 +45,26 @@ bot/
 3. Push to GitHub
 4. GitHub Actions deploys to Fly.io
 
+## Workspace Sync
+
+The `workspace/` folder syncs between local and cloud via Git:
+
+**Local → Cloud:**
+- Edit workspace files locally (memory, config, etc.)
+- `git commit && git push`
+- Deploy copies newer files to cloud volume
+
+**Cloud → Local:**
+- Cloud bot writes to `/data/workspace`
+- Sync workflow runs every 6 hours (or manual trigger)
+- Commits changes back to repo
+- `git pull` to get cloud changes locally
+
+**Manual sync from cloud:**
+```bash
+./scripts/sync-memory.sh
+```
+
 ## Current Focus
 
 - Lead handling via webhook
