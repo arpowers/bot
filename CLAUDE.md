@@ -122,17 +122,33 @@ fly secrets set RCLONE_CONFIG_GDRIVE_TOKEN='{"access_token":"...","token_type":"
 # ... other service keys
 ```
 
+## Bot Self-Modification
+
+The bot can modify its own capabilities without redeploying:
+
+| What | Location | How |
+|------|----------|-----|
+| MCP servers | `workspace/mcporter.json` | Edit JSON, restart gateway |
+| Dynamic skills | `workspace/skills/` | Create SKILL.md |
+| Memory | `workspace/*.md` | Edit directly |
+
+These are on Google Drive and sync instantly. No git push or deploy needed.
+
+For core changes (gateway config, baked-in skills), use git commit → auto-deploy.
+
 ## Files to Know
 
 | File | Purpose |
 |------|---------|
 | `.openclaw/openclaw.json` | Gateway config (model, channels, skills) |
+| `workspace/mcporter.json` | MCP servers (bot-editable) |
+| `workspace/skills/` | Dynamic skills (bot-editable) |
 | `.env` | Local secrets (gitignored) |
 | `.env.example` | Template for .env |
 | `entrypoint.sh` | Prod setup (config patch + rclone) |
 | `Dockerfile` | Container definition |
 | `fly.toml` | Fly.io app config |
-| `skills/*/SKILL.md` | Custom skill definitions |
+| `skills/*/SKILL.md` | Core skill definitions |
 | `workspace/*.md` | Bot memory and context |
 
 ## Conventions
