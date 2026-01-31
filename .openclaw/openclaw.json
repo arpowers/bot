@@ -36,7 +36,7 @@
   "channels": {
     "telegram": {
       "dmPolicy": "allowlist",
-      "dmAllowlist": ["5810543997"],
+      "allowFrom": ["5810543997"],
       "botToken": "${TELEGRAM_BOT_TOKEN}",
       "groupPolicy": "allowlist",
       "streamMode": "partial"
