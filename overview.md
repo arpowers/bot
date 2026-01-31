@@ -37,29 +37,38 @@ Personal AI assistant running on OpenClaw. Handles leads, email, analytics, cale
 ## Architecture
 
 ```
-~/dev/bot/                      # This repo IS the OpenClaw state dir
-├── openclaw.json               # Gateway config
-├── .env                        # Secrets (gitignored)
-├── agents/                     # Runtime state (gitignored)
-├── skills/                     # Custom skills
-├── workspace/                  # OpenClaw workspace
-│   ├── IDENTITY.md             # Bot identity (name, vibe)
-│   ├── SOUL.md                 # Bot values, boundaries
-│   ├── USER.md                 # About you (Andrew)
-│   ├── MEMORY.md               # Curated long-term facts
-│   ├── TOOLS.md                # Service configs
-│   ├── HEARTBEAT.md            # Scheduled tasks
-│   ├── AGENTS.md               # Workspace home base
-│   ├── CONTACTS.md             # People database
-│   ├── TASKS.md                # Sales activity tracking
-│   ├── memory/                 # Session transcripts
-│   └── finance/                # Fidelity exports
-├── config/                     # Extra configs (himalaya)
-├── plans/                      # Specs and docs
-└── .github/workflows/          # CI/CD
+bot/                              # Git repo
+├── .openclaw/                    # OpenClaw state (OPENCLAW_STATE_DIR)
+│   ├── openclaw.json             # Gateway config (version controlled)
+│   ├── agents/                   # Runtime state (gitignored)
+│   ├── credentials/              # Auth tokens (gitignored)
+│   └── telegram/                 # Pairing data (gitignored)
+├── skills/                       # Custom skills (SKILL.md format)
+├── workspace/                    # → Symlink to Google Drive
+│   ├── IDENTITY.md               # Bot identity (name, vibe)
+│   ├── SOUL.md                   # Bot values, boundaries
+│   ├── USER.md                   # About you (Andrew)
+│   ├── MEMORY.md                 # Curated long-term facts
+│   ├── TOOLS.md                  # Service configs
+│   ├── HEARTBEAT.md              # Scheduled tasks
+│   ├── AGENTS.md                 # Workspace home base
+│   ├── CONTACTS.md               # People database
+│   ├── TASKS.md                  # Sales activity tracking
+│   ├── memory/                   # Session transcripts
+│   └── finance/                  # Fidelity exports
+├── config/                       # Extra configs (legacy)
+├── plans/                        # Specs and docs
+├── .env                          # Secrets (gitignored)
+├── Dockerfile                    # Cloud container
+├── entrypoint.sh                 # Prod config patching + rclone mount
+├── fly.toml                      # Fly.io config
+└── .github/workflows/            # Deploy on push
+
+Google Drive (shared persistence)
+└── ari-bot/workspace/            # Real-time sync between local & cloud
 ```
 
-**No ~/.openclaw needed.** `run.sh` sets `OPENCLAW_STATE_DIR` to this repo.
+**No ~/.openclaw needed.** `OPENCLAW_STATE_DIR` points to `./.openclaw`
 
 ---
 
@@ -67,9 +76,10 @@ Personal AI assistant running on OpenClaw. Handles leads, email, analytics, cale
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Local gateway | Setup | Run via `openclaw gateway run` |
-| Cloud deploy | Setup | Fly.io via GitHub Actions |
-| Memory sync | Planned | Cloud → repo sync script |
+| Local gateway | Ready | Run via `openclaw gateway run` |
+| Cloud deploy | Ready | Fly.io via GitHub Actions |
+| Memory sync | Ready | Real-time via Google Drive |
+| Telegram bots | Ready | @ari_local_bot (dev), @ari_task_bot (prod) |
 | Lead handler | Migrate | From automation repo |
 | Email skill | Planned | Gmail via google-mcp |
 | Analytics skill | Planned | PostHog daily digest |
@@ -161,36 +171,27 @@ See [spec-capabilities.md](plans/spec-capabilities.md) for full skill analysis.
 ### Environment Variables
 
 ```bash
-# Required
-ANTHROPIC_API_KEY          # Claude API
-OPENCLAW_GATEWAY_TOKEN     # Gateway security
+# Required (use OAuth token, not raw API key!)
+ANTHROPIC_API_KEY          # sk-ant-oat01-... (OAuth from claude setup-token)
+OPENCLAW_STATE_DIR         # ./.openclaw (local) or /app/.openclaw (prod)
+GATEWAY_TOKEN              # Gateway security
 TELEGRAM_BOT_TOKEN         # Telegram bot
 
-# MCP Servers
+# Google Drive (cloud only)
+RCLONE_CONFIG_GDRIVE_TOKEN # JSON token for rclone mount
+
+# Services
 GOOGLE_OAUTH_CLIENT_ID     # Google services
 GOOGLE_OAUTH_CLIENT_SECRET
 PERPLEXITY_API_KEY         # Research
-APOLLO_IO_API_KEY          # Lead enrichment
+APOLLO_API_KEY             # Lead enrichment
 APIFY_API_TOKEN            # Web scraping
-POSTHOG_API_KEY            # Analytics
-POSTHOG_PROJECT_ID         # Analytics project
+ELEVENLABS_API_KEY         # TTS
 ```
 
-### Memory Config
+### Config File
 
-```json
-{
-  "compaction": {
-    "memoryFlush": { "enabled": true }
-  },
-  "memorySearch": {
-    "experimental": {
-      "sessionMemory": true,
-      "sources": ["memory", "sessions"]
-    }
-  }
-}
-```
+Single config at `.openclaw/openclaw.json`. Uses relative paths locally, patched to absolute paths by `entrypoint.sh` in production.
 
 ---
 
@@ -198,17 +199,17 @@ POSTHOG_PROJECT_ID         # Analytics project
 
 ```bash
 # Local development
-openclaw gateway run --port 3000       # Start gateway
+openclaw gateway run                   # Start gateway
 openclaw health                        # Check status
 openclaw doctor                        # Validate config
 
 # Deployment
 git push                               # Auto-deploy to Fly.io
-fly logs -a ap-assist-agent            # View cloud logs
-fly ssh console                        # SSH into cloud
+fly logs --app ap-assist-agent         # View cloud logs
+fly ssh console --app ap-assist-agent  # SSH into cloud
 
-# Memory sync
-./scripts/sync-memory.sh               # Pull cloud memory to repo
+# Telegram pairing
+openclaw pairing approve telegram <code>
 ```
 
 ---
