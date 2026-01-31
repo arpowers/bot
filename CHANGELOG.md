@@ -2,6 +2,11 @@
 
 ## 2026-01-31
 
+### MCP Server Support
+- Added `mcporter` to Docker image for cloud MCP support
+- Twenty CRM MCP server configured (`twenty-crm-mcp-server`)
+- MCP config in `workspace/mcporter.json` (bot-editable via Google Drive)
+
 ### Bot Self-Modification
 - MCP servers now in `workspace/mcporter.json` (Google Drive)
 - Dynamic skills can be added to `workspace/skills/`
