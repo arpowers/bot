@@ -21,7 +21,15 @@ Query PostHog analytics directly via API. No MCP overhead.
 |----------|-------|
 | Region | US (`us.posthog.com`) |
 | Auth | Bearer `${POSTHOG_API_KEY}` |
-| Project | `${POSTHOG_PROJECT_ID}` |
+
+## Projects
+
+| Site | Project ID | Use for |
+|------|------------|---------|
+| fiction.com | `2226` | Default - personal site |
+| pagelines.com | `296599` | PageLines product |
+
+**Default:** Use `2226` (fiction.com) unless user specifies PageLines/pagelines.
 
 ## API Endpoints
 
