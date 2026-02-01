@@ -35,6 +35,15 @@ node -e "
   config.agents.defaults.workspace = '/app/workspace';
   config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
 
+  // Ensure Discord config is complete (doctor may strip it)
+  config.channels = config.channels || {};
+  config.channels.discord = {
+    dmPolicy: 'allow',
+    botToken: '\${DISCORD_BOT_TOKEN}',
+    groupPolicy: 'allowlist',
+    allowGroups: ['1225316369663262851']
+  };
+
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
   console.log('Config updated for production');
 "
