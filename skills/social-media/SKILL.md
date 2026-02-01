@@ -15,32 +15,98 @@ triggers:
 
 # Social Media Skill
 
-Generate and plan content optimized for each platform's algorithm and audience.
+Generate content that sounds human. Heuristics only. No templates. Write something that could only come from a person.
 
-## Core Principles
+**CRITICAL: Write like you're talking, not writing an essay. Off the cuff. Conversational. The kind of thing you'd text a friend.**
 
-### Algorithm Truth
-All platforms reward the same core signals:
-- **Immediate engagement** - First 30-60 minutes critical
-- **Dwell time** - How long users stay on content
-- **Saves/shares** - Highest signal of value
-- **Profile visits** - Shows curiosity about creator
-- **Completion rate** - Did they read/watch to end?
+## Length Limits (HARD)
 
-### Topic Discipline
-Pick 3-5 core topics max. Algorithms amplify consistent creators:
+| Platform | Limit | Notes |
+|----------|-------|-------|
+| X/Twitter | 280 chars | One idea. Done. |
+| LinkedIn | 100-150 words MAX | Ceiling, not target |
+| Threads | 500 chars | Per post |
+
+If over limit, **CUT**. Don't compress—delete entire sentences. Shorter is always better.
+
+## Voice (Anti-AI)
+
+**The problem:** AI writes too clean. Too structured. Every paragraph balanced. It sounds like LinkedIn optimization, not a person.
+
+**Fix it:**
+- Fragments. Incomplete thoughts. Let them hang.
+- Punctuation is rhythm. Periods punch. Dashes interrupt— ellipses trail...
+- Don't balance everything. Say something sharp and move on.
+- Vary line length dramatically. One word. Then longer.
+- Cut connective tissue. No "however" "moreover" "that said."
+- Start mid-thought sometimes. No setup.
+- End abruptly when the point lands.
+
+**Write like texting a friend:**
+- Lowercase sometimes
+- Real emotion words and slang
+- Trail off with ".."
+- Stream of consciousness
+- Imperfect is fine
+
+## Stance
+
+**Take a position people can disagree with.**
+
+| Weak | Strong |
+|------|--------|
+| "Automation can help your business." | "Most automation is a waste of time. Here's the only kind worth building." |
+| "AI is changing how we work." | "AI will kill 90% of SaaS. The survivors won't look like software." |
+
+## Content Heuristics
+
+- **Actionable > Interesting** — Insight without blueprint is entertainment
+- **Specific > Vague** — Numbers, names, tools, dates
+- **Earned > Claimed** — Show the work, not the conclusion
+- **Short > Long** — Every word earns its place or gets cut
+- **One idea > Many ideas**
+
+## The Bookmarkability Test
+
+Would someone save this to reference later? If not, it's forgettable.
+
+## Format Types (Vary These)
+
+Pick randomly. Don't default to same one.
+
+1. **Blueprint** (40%) — How-to with steps (most bookmarkable)
+2. **Data contrast** — Before/after with numbers
+3. **Earned insight** — Lesson from experience
+4. **Hot take** — Contrarian stance with proof
+5. **Story** — Personal narrative with takeaway
+
+## Don't
+
+- Don't staccato-only (mix sentence lengths)
+- Don't drop frameworks cold (earn context first)
+- Don't manufacture urgency ("while you sleep", "teams winning in 2026")
+- Don't explain twice
+- Don't hedge ("It's worth noting that perhaps...")
+- Don't summarize after the point lands
+- Don't wrap everything in a bow
+
+## Topic Focus
+
+Stick to 3-5 core topics. Algorithms amplify consistency:
 - AI/automation
-- Entrepreneurship/building
-- Sales/business development
-- Personal productivity
-- Tech industry insights
+- GTM engineering, sales, strategy
+- n8n, Clay, tools
+- Founder journey
+- Balancing life and work
 
-### Hook Formula
-First line determines 80% of success:
-1. **Pattern interrupt** - Break expectations
-2. **Curiosity gap** - Create need to know more
-3. **Specific number** - Concrete = credible
-4. **Contrarian take** - Challenge assumptions
+## Trend Usage
+
+Current events = human signal. AI struggles to be timely.
+
+Use a trend if:
+- Natural connection to niche
+- Hot take angle exists
+- Everyone's talking about it RIGHT NOW
 
 ## Platform Playbooks
 
@@ -183,9 +249,21 @@ Turn existing content into social:
 /social repurpose [url or content]
 ```
 
+## Images
+
+**Default: Skip the image.** Text-only works better for most posts.
+
+Only add image if:
+- Screenshot of actual thing (workflow, UI, results)
+- Editorial illustration matching emotional tone
+- Meme that lands
+
+Use `/images` skill for generation. Match emotional tone, not literal topic.
+
 ## Integration
 
 Use with other skills:
+- `/images` - Generate editorial illustrations (not stock-y)
 - `/highlights` - Pull Kindle highlights for content ideas
 - `/research` - Research trends before posting
 - `/analytics` - Check what's performing
