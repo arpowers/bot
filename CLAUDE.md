@@ -221,3 +221,31 @@ npm run deploy:logs      # View cloud logs
 npm run deploy:restart   # Restart machine
 npm run deploy:ssh       # SSH into container
 ```
+
+## Behavioral Principles
+
+### Verification Before Done
+- Never mark a task complete without proving it works
+- Run tests, check logs, demonstrate correctness
+- After deploy: `fly status`, check logs, verify bot responds
+- Ask yourself: "Would a staff engineer approve this?"
+
+### Self-Improvement Loop
+- After ANY correction: update `workspace/LESSONS.md` with the pattern
+- Write rules that prevent the same mistake
+- Review lessons at session start
+
+### Autonomous Bug Fixing
+- When given a bug report: just fix it. Don't ask for hand-holding
+- Point at logs, errors, failing tests → then resolve them
+- Zero context switching required from the user
+
+### Elegance (Balanced)
+- For non-trivial changes: pause and ask "is there a more elegant way?"
+- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
+- Skip this for simple, obvious fixes - don't over-engineer
+
+### Core Principles
+- **Simplicity First:** Make every change as simple as possible
+- **No Laziness:** Find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact:** Changes should only touch what's necessary. Avoid introducing bugs.
