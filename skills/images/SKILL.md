@@ -207,25 +207,89 @@ Before generating, ask:
 
 ---
 
-## Integration
+## Image Generation Tools
 
-Works with:
-- Gemini image generation (via MCP)
-- Direct image APIs
-- Manual prompt for Midjourney/DALL-E
+### Primary: Gemini (MCP)
 
-### Usage
+Use `mcp__gemini__gemini-generate-image` for most generations.
 
-```
-/images editorial: post about automation anxiety
+**Parameters:**
+| Param | Options | Default |
+|-------|---------|---------|
+| prompt | Your image prompt | required |
+| aspectRatio | 1:1, 16:9, 9:16, 4:3, 3:4, 2:3, 3:2 | 1:1 |
+| imageSize | 1K (fast), 2K (balanced), 4K (best) | 2K |
+| style | "editorial illustration", "watercolor", etc. | none |
+
+**Example call:**
+```json
+{
+  "prompt": "Owl reading documents in purple tree at night, editorial illustration, flat colors, purple and coral palette, whimsical, hand-drawn, no text",
+  "aspectRatio": "1:1",
+  "imageSize": "2K"
+}
 ```
 
-```
-/images data: workflow showing lead qualification process
+**Aspect ratios by use:**
+| Use Case | Ratio |
+|----------|-------|
+| Instagram/social square | 1:1 |
+| Twitter/X header | 16:9 |
+| LinkedIn post | 1:1 or 4:3 |
+| Instagram story/Reels | 9:16 |
+| Blog header | 16:9 or 3:2 |
+| Pinterest | 2:3 |
+
+### Secondary: OpenAI DALL-E
+
+If Gemini unavailable, use OpenAI API:
+
+```bash
+curl -s "https://api.openai.com/v1/images/generations" \
+  -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "dall-e-3",
+    "prompt": "[your prompt]",
+    "size": "1024x1024",
+    "quality": "hd"
+  }'
 ```
 
+### Alternative: Midjourney
+
+For Midjourney, output the optimized prompt for manual use:
+
+**Midjourney prompt format:**
 ```
-/images for this post: [paste content]
+[scene description] --ar 1:1 --style raw --v 6.1
 ```
 
-Bot will determine mode from context if not specified.
+Add these Midjourney params as needed:
+- `--ar 16:9` (aspect ratio)
+- `--style raw` (less stylized)
+- `--v 6.1` (version)
+- `--no text, words, letters` (avoid text)
+
+---
+
+## Usage
+
+### Generate for social post
+```
+/images for post about [topic]
+```
+
+### Specify mode
+```
+/images editorial: anxiety about AI replacing jobs
+/images data: user onboarding flow diagram
+```
+
+### With aspect ratio
+```
+/images for LinkedIn (1:1): post about cold outreach
+/images for blog header (16:9): article about automation
+```
+
+Bot determines mode from context if not specified. Always generates—user decides to include.
