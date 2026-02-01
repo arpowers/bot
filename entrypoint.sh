@@ -17,6 +17,8 @@ node -e "
   // Override paths for production
   config.agents.defaults.workspace = '/app/workspace';
   config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
+  if (!config.mcp) config.mcp = {};
+  config.mcp.configPath = '/app/workspace/mcporter.json';
 
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
   console.log('Config updated for production');
