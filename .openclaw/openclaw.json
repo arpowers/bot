@@ -42,8 +42,7 @@
       "streamMode": "partial"
     },
     "discord": {
-      "groupPolicy": "open",
-      "applicationId": "1465166564394274972"
+      "groupPolicy": "open"
     }
   },
   "gateway": {
