@@ -147,6 +147,49 @@ fi
 
 **Required env:** `GITHUB_TOKEN`
 
+## 8. Google Sheets (Service Account)
+
+```bash
+# Uses same service account as Calendar
+TOKEN=$(node /app/scripts/google-sa-token.js 2>&1)
+
+if [[ $TOKEN == ya29.* ]]; then
+  # Test sheets access (replace with your sheet ID)
+  SHEET_ID="your_leads_sheet_id"
+  RESULT=$(curl -s "https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?fields=properties.title" \
+    -H "Authorization: Bearer $TOKEN")
+
+  if echo "$RESULT" | grep -q "title"; then
+    TITLE=$(echo "$RESULT" | jq -r '.properties.title')
+    echo "✅ Google Sheets - Working (sheet: $TITLE)"
+  else
+    echo "❌ Google Sheets - Token works but sheet not accessible"
+    echo "Share sheet with: ari-375@fiction2025.iam.gserviceaccount.com"
+  fi
+else
+  echo "❌ Google Sheets - Service account token failed"
+fi
+```
+
+**Required:** Sheet shared with `ari-375@fiction2025.iam.gserviceaccount.com`
+
+## 9. Readwise (Kindle Highlights)
+
+```bash
+RESULT=$(curl -s "https://readwise.io/api/v2/books/?page_size=1" \
+  -H "Authorization: Token ${READWISE_ACCESS_TOKEN}")
+
+if echo "$RESULT" | grep -q "results"; then
+  COUNT=$(echo "$RESULT" | jq -r '.count')
+  echo "✅ Readwise - Working ($COUNT books)"
+else
+  echo "❌ Readwise - Failed: $RESULT"
+fi
+```
+
+**Required env:** `READWISE_ACCESS_TOKEN`
+Get token at: https://readwise.io/access_token
+
 ## Environment Variable Checklist
 
 | Variable | Purpose | Check |
@@ -160,6 +203,7 @@ fi
 | `DATAFORSEO_PASSWORD` | SEO data | Set? |
 | `GITHUB_TOKEN` | GitHub API | Set? |
 | `GMAIL_APP_PASSWORD` | Email | Configured in Himalaya |
+| `READWISE_ACCESS_TOKEN` | Kindle highlights | `echo $READWISE_ACCESS_TOKEN \| head -c 10` |
 
 ## Quick Full Test
 
@@ -208,6 +252,27 @@ if gh api user > /dev/null 2>&1; then
   echo "✅ GitHub"
 else
   echo "❌ GitHub"
+fi
+
+# Google Sheets (same token as Calendar)
+# Requires LEADS_SHEET_ID env var
+if [ -n "${LEADS_SHEET_ID}" ]; then
+  if curl -sf "https://sheets.googleapis.com/v4/spreadsheets/${LEADS_SHEET_ID}?fields=properties.title" \
+    -H "Authorization: Bearer $TOKEN" > /dev/null 2>&1; then
+    echo "✅ Google Sheets"
+  else
+    echo "❌ Google Sheets"
+  fi
+else
+  echo "⚠️ Google Sheets (LEADS_SHEET_ID not set)"
+fi
+
+# Readwise
+if curl -sf "https://readwise.io/api/v2/books/?page_size=1" \
+  -H "Authorization: Token ${READWISE_ACCESS_TOKEN}" > /dev/null 2>&1; then
+  echo "✅ Readwise"
+else
+  echo "❌ Readwise"
 fi
 
 echo ""
