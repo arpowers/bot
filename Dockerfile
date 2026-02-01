@@ -1,9 +1,10 @@
 FROM node:22-slim
 
 # Install dependencies + Himalaya for email
+# OpenClaw 2026.1.30 - bust cache for updates
 RUN apt-get update && apt-get install -y git curl tini fuse3 unzip && rm -rf /var/lib/apt/lists/* \
     && curl https://rclone.org/install.sh | bash \
-    && npm install -g openclaw@latest mcporter \
+    && npm install -g openclaw@latest mcporter@latest \
     && curl -sSL https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.x86_64-linux.tgz \
        | tar -xzC /usr/local/bin
 
