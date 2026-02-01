@@ -42,10 +42,10 @@
       "streamMode": "partial"
     },
     "discord": {
-      "dmPolicy": "allowlist",
-      "allowFrom": ["354714361379684363"],
+      "dmPolicy": "allow",
       "botToken": "${DISCORD_BOT_TOKEN}",
-      "groupPolicy": "allowlist"
+      "groupPolicy": "allowlist",
+      "allowGroups": ["1225316369663262851"]
     }
   },
   "gateway": {
