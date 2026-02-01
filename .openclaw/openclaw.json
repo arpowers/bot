@@ -77,8 +77,5 @@
         "enabled": true
       }
     }
-  },
-  "mcp": {
-    "configPath": "./workspace/mcporter.json"
   }
 }
