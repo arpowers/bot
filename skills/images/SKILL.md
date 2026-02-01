@@ -1,6 +1,6 @@
 ---
 name: images
-description: Generate editorial-style images for social media and content
+description: Generate images for social media, blogs, and data communication
 version: 1.0.0
 triggers:
   - image
@@ -8,24 +8,24 @@ triggers:
   - generate image
   - create image
   - visual
+  - chart
+  - diagram
+  - workflow
 ---
 
 # Image Generation Skill
 
-Generate editorial-style illustrations for social content. Match emotional tone, not literal topics.
+Two modes: **Editorial illustrations** for social/blog content, **Data graphics** for charts/workflows.
 
-## Default Rule
+**Always generate an image.** User decides whether to include.
 
-**Skip the image.** Text-only works better for most posts.
+---
 
-Only generate if:
-- Screenshot of actual thing (workflow, UI, results)
-- Editorial illustration matching emotional tone
-- Meme that lands
+## Mode 1: Editorial Illustrations
 
-## Style Guide
+For: Social posts, blog headers, featured images, emotional content.
 
-**The vibe:** New Yorker covers, blog headers, indie game art. Not stock photos. Not AI gradient slop.
+**Style:** New Yorker covers, indie game art, blog headers. Not stock. Not AI gradient slop.
 
 ### Don't Illustrate Literally
 
@@ -42,14 +42,14 @@ Match the _emotional tone_, not the topic:
 
 ### Style Characteristics
 
-- Bold flat colors, limited palette (2-4 colors)
+- Bold flat colors, limited palette (2-4 colors dominating)
 - Heavy black or dark outlines
-- Whimsical/surreal subjects
+- Whimsical/surreal subjects (creatures, unexpected combinations)
 - Hand-drawn feel, not polished 3D
 - Emotional characters when applicable
 - Single clear focal point
 
-### Color Palettes That Work
+### Color Palettes
 
 | Mood | Palette |
 |------|---------|
@@ -60,15 +60,13 @@ Match the _emotional tone_, not the topic:
 | Bold | Red + black + white |
 | Playful | Rainbow/70s poster |
 
-## Prompt Template
+### Prompt Template
 
 ```
 [emotional concept as surreal scene], editorial illustration style, bold flat colors, heavy outlines, [2-3 color palette], whimsical, hand-drawn feel, [mood: playful/melancholic/energetic], no text
 ```
 
-## Examples
-
-### Good Prompts
+### Examples
 
 ```
 Owl reading documents in purple tree at night, editorial illustration, flat colors, purple and coral palette, whimsical, hand-drawn, no text
@@ -86,78 +84,25 @@ Psychedelic mountain landscape with winding path, 70s poster style, rainbow colo
 Tiny robot overwhelmed by giant stack of papers, editorial illustration, teal and orange palette, playful, hand-drawn feel, no text
 ```
 
-```
-Fox in business suit looking confused at maze of cables, editorial illustration, sage and coral, whimsical, heavy outlines, no text
-```
+### Don't Use (Editorial)
 
-```
-Astronaut watering tiny plant on moon, editorial illustration, purple and gold palette, hopeful mood, hand-drawn feel, no text
-```
-
-## Don't Use
-
-- AI gradient art (the rainbow swirly stuff)
+- AI gradient art (rainbow swirly stuff)
 - Stock aesthetic (handshake, lightbulb, gears)
 - Literal metaphors (arrows, targets, puzzle pieces)
 - Photorealistic style
-- Corporate clip art vibes
+- Corporate clip art
 - Busy compositions with multiple focal points
 
-## Text Control
+### Text Control
 
 **Default:** Say "no text" in prompt
 
-**If text needed:** Specify exactly what text
+**If text needed:** Specify exactly:
 - "stop sign in frame"
 - "text saying 'SOLD OUT' on sign"
 - "404 on computer screen"
 
-## Usage
-
-### For Social Post
-```
-/images for post about [topic]
-Mood: [playful/melancholic/energetic/hopeful/frustrated]
-```
-
-### Direct Generation
-```
-/images [emotional scene description]
-```
-
-### With Context
-```
-/images for this LinkedIn post: [paste post]
-```
-
-## Integration
-
-Works with:
-- Gemini image generation (via MCP)
-- Direct image APIs
-- Manual prompt for Midjourney/DALL-E
-
-### Using Gemini MCP
-
-```
-Generate image with prompt:
-"[your editorial illustration prompt]"
-```
-
-### Manual (for Midjourney, etc.)
-
-Bot will output the optimized prompt. Copy to your preferred tool.
-
-## Workflow
-
-1. **Assess:** Does this post actually need an image?
-2. **Identify emotion:** What's the feeling, not the topic?
-3. **Translate:** Surreal scene that captures that emotion
-4. **Build prompt:** Use template with specific palette and mood
-5. **Generate:** Use available image tool
-6. **Evaluate:** Does it feel editorial or stock-y?
-
-## Quick Reference
+### Quick Reference
 
 | Post About | Generate |
 |------------|----------|
@@ -167,6 +112,120 @@ Bot will output the optimized prompt. Copy to your preferred tool.
 | Simplicity | Single origami crane on empty desk |
 | Speed | Blur of legs running, stylized |
 | Patience | Turtle in garden, sunset colors |
-| AI tools | Robot doing something mundane (dishes, filing) |
+| AI tools | Robot doing mundane task (dishes, filing) |
 | Sales | Fox in conversation with rabbit |
 | Automation | Assembly line of birds passing notes |
+
+---
+
+## Mode 2: Data Graphics
+
+For: Charts, workflows, diagrams, process visualizations, architecture docs.
+
+**Style:** Tufte principles, Swiss design, Apple aesthetics. High data-ink ratio. Every pixel earns its place.
+
+### Core Principles
+
+1. **Data-ink ratio** — Maximize data, minimize decoration
+2. **Editorial minimalism** — If it doesn't inform, remove it
+3. **Swiss precision** — Grid-based, typographically clean
+4. **Apple clarity** — Generous whitespace, subtle hierarchy
+
+### Style Characteristics
+
+- Monochromatic or 2-color palette max
+- No gradients, no shadows, no 3D effects
+- Thin lines, consistent stroke weights
+- San-serif typography (SF Pro, Inter, Helvetica)
+- Generous negative space
+- Left-aligned text, clear hierarchy
+- No chartjunk (grid lines only if essential)
+
+### Prompt Template (Data)
+
+```
+[type of visualization] showing [what data/process], minimalist Swiss design style, clean lines, [single accent color] on white background, high data-ink ratio, no decorative elements, professional, Apple-style clarity, no text unless essential
+```
+
+### Examples
+
+```
+Flowchart showing user authentication process, minimalist Swiss design, thin black lines on white, single blue accent for decisions, high data-ink ratio, clean sans-serif labels only, no decorative elements
+```
+
+```
+Comparison chart of three pricing tiers, Apple website aesthetic, generous whitespace, subtle gray lines, single accent color for emphasis, minimal text, no chartjunk
+```
+
+```
+System architecture diagram with microservices, Swiss design grid layout, monochromatic with teal accents, thin consistent lines, clear hierarchy, maximum clarity
+```
+
+```
+Workflow diagram for content pipeline, editorial minimalism, black and white with coral highlights, clean geometric shapes, no shadows or gradients, Tufte-inspired
+```
+
+### Don't Use (Data)
+
+- Gradients or 3D effects
+- Decorative icons or illustrations
+- Multiple competing colors
+- Drop shadows
+- Rounded bubbly shapes
+- Infographic clip art style
+- Excessive grid lines
+- Borders around everything
+
+### Data Graphics Checklist
+
+Before generating, ask:
+- [ ] Can I remove any lines?
+- [ ] Can I remove any colors?
+- [ ] Is every element showing data?
+- [ ] Would Tufte approve?
+- [ ] Does it look like it belongs on apple.com?
+
+---
+
+## When to Use Which Mode
+
+| Content Type | Mode | Why |
+|--------------|------|-----|
+| Social post | Editorial | Emotional engagement |
+| Blog header | Editorial | Visual interest |
+| Featured image | Editorial | Personality |
+| Process workflow | Data | Clarity |
+| Architecture diagram | Data | Technical accuracy |
+| Comparison chart | Data | Information density |
+| Pricing table | Data | Quick scanning |
+| Onboarding flow | Data | User guidance |
+| Concept explanation | Either | Depends on audience |
+
+**Rule of thumb:**
+- Trying to make someone *feel* something? → Editorial
+- Trying to make someone *understand* something? → Data
+
+---
+
+## Integration
+
+Works with:
+- Gemini image generation (via MCP)
+- Direct image APIs
+- Manual prompt for Midjourney/DALL-E
+
+### Usage
+
+```
+/images editorial: post about automation anxiety
+```
+
+```
+/images data: workflow showing lead qualification process
+```
+
+```
+/images for this post: [paste content]
+```
+
+Bot will determine mode from context if not specified.

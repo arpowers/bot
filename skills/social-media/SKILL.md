@@ -251,14 +251,11 @@ Turn existing content into social:
 
 ## Images
 
-**Default: Skip the image.** Text-only works better for most posts.
+**Always generate an image.** User decides whether to include.
 
-Only add image if:
-- Screenshot of actual thing (workflow, UI, results)
-- Editorial illustration matching emotional tone
-- Meme that lands
+Use `/images` skill. Match emotional tone, not literal topic.
 
-Use `/images` skill for generation. Match emotional tone, not literal topic.
+Style: Editorial illustration (New Yorker, indie game art). Not stock. Not AI gradient slop.
 
 ## Integration
 
