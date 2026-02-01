@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-02-01
+
+### Discord Channel
+- Configured Discord bot for DMs with allowlist policy
+- User ID `354714361379684363` (arpowers@gmail.com) whitelisted
+- Set `DISCORD_BOT_TOKEN` in local .env and Fly.io secrets
+- Updated `openclaw.json` with Discord channel config
+
 ## 2026-01-31
 
 ### MCP Server Support

@@ -42,6 +42,9 @@
       "streamMode": "partial"
     },
     "discord": {
+      "dmPolicy": "allowlist",
+      "allowFrom": ["354714361379684363"],
+      "botToken": "${DISCORD_BOT_TOKEN}",
       "groupPolicy": "allowlist"
     }
   },

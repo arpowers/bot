@@ -86,6 +86,58 @@ Generate tokens:
 openssl rand -hex 32  # For GATEWAY_TOKEN, WEBHOOK_TOKEN
 ```
 
+---
+
+## Channel Setup
+
+### Telegram
+
+1. Create bot via @BotFather, get token
+2. Set `TELEGRAM_BOT_TOKEN` in .env and Fly.io secrets
+3. Config in `openclaw.json`:
+```json
+"telegram": {
+  "dmPolicy": "allowlist",
+  "allowFrom": ["YOUR_TELEGRAM_USER_ID"],
+  "botToken": "${TELEGRAM_BOT_TOKEN}"
+}
+```
+4. Get your user ID: message @userinfobot on Telegram
+
+### Discord
+
+1. Create bot at [Discord Developer Portal](https://discord.com/developers/applications)
+   - New Application → Bot → Add Bot → copy Bot Token
+   - Enable Message Content Intent + Server Members Intent
+2. Invite bot to your server:
+   - OAuth2 → URL Generator
+   - Scopes: `bot`, `applications.commands`
+   - Permissions: View Channels, Send Messages, Read History, Add Reactions
+   - Open generated URL → pick server
+3. Set token:
+```bash
+# Local
+echo 'DISCORD_BOT_TOKEN="your_token"' >> .env
+
+# Cloud
+fly secrets set DISCORD_BOT_TOKEN="your_token" --app ap-assist-agent
+```
+4. Config in `openclaw.json`:
+```json
+"discord": {
+  "dmPolicy": "allowlist",
+  "allowFrom": ["YOUR_DISCORD_USER_ID"],
+  "botToken": "${DISCORD_BOT_TOKEN}",
+  "groupPolicy": "allowlist"
+}
+```
+5. Get your Discord user ID:
+   - Discord Settings → Advanced → Developer Mode ON
+   - Right-click yourself → Copy User ID
+6. If pairing required: `openclaw pairing approve discord <code>`
+
+---
+
 ### Config File Schema
 
 Valid root-level keys in `openclaw.json`:
@@ -97,7 +149,7 @@ Valid root-level keys in `openclaw.json`:
 | `session` | Scope, reset policy, identity links |
 | `skills` | Bundled skills, extra directories |
 | `plugins` | MCP servers, external tools |
-| `channels` | Telegram, Discord, WhatsApp |
+| `channels` | Telegram, Discord, WhatsApp (see Channel Setup below) |
 | `commands` | Slash commands, restart |
 | `tools` | Tool policies, allow/deny lists |
 
