@@ -53,6 +53,10 @@
       "token": "${GATEWAY_TOKEN}"
     }
   },
+  "hooks": {
+    "enabled": true,
+    "token": "${MOLTBOT_WEBHOOK_TOKEN}"
+  },
   "skills": {
     "load": {
       "extraDirs": ["./skills", "./workspace/skills"]

@@ -21,3 +21,16 @@ jobs:
         run: flyctl deploy --remote-only --yes
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Notify bot on failure
+        if: failure()
+        run: |
+          curl -X POST "https://assist.andrewpowers.com/hooks/agent" \
+            -H "Authorization: Bearer ${{ secrets.MOLTBOT_WEBHOOK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "message": "CI deploy failed for commit ${{ github.sha }}. Check https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} - clone repo, diagnose, and push a fix.",
+              "name": "CI Failure",
+              "deliver": true,
+              "channel": "telegram"
+            }'
