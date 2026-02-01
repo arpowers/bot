@@ -16,6 +16,9 @@ COPY .openclaw/ .openclaw/
 # Copy skills
 COPY skills/ skills/
 
+# Copy scripts
+COPY scripts/ scripts/
+
 # Copy Himalaya config
 COPY config/himalaya.toml /etc/himalaya/config.toml
 
