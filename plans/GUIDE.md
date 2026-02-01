@@ -68,3 +68,36 @@ How we know it worked.
 1. Read the doc fully before editing
 2. Make targeted changes
 3. Update `overview.md` status if needed
+
+---
+
+## Bot Memory Maintenance
+
+Guidelines for keeping the bot's memory files accurate.
+
+### File Ownership
+
+| File | Owner | Purpose |
+|------|-------|---------|
+| TOOLS.md | Human | Reference for current tools, APIs, skills |
+| USER.md | Human | Info about Andrew |
+| MEMORY.md | Bot | Log of learnings, decisions, milestones |
+| CONTACTS.md | Bot | People the bot learns about |
+
+### When to Update
+
+**TOOLS.md** (human maintains):
+- When APIs are added, removed, or change status
+- When skills are created or modified
+- When OAuth tokens are refreshed or reconfigured
+
+**MEMORY.md** (bot maintains):
+- When significant decisions are made
+- When new facts are learned about projects/people
+- When milestones are reached
+
+### Don't Modify
+
+- Bot-added entries in MEMORY.md (unless outdated or instructed)
+- Bot-added contacts in CONTACTS.md
+- Daily logs in memory/ folder
