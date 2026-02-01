@@ -19,9 +19,9 @@ find /data -name "*.lock" -delete 2>/dev/null || true
 echo "Killing orphaned MCP processes..."
 pkill -f "npx.*-mcp" 2>/dev/null || true
 
-# Run openclaw doctor to auto-heal config issues
-echo "Running openclaw doctor..."
-openclaw doctor --fix 2>/dev/null || echo "Doctor not available or failed (non-fatal)"
+# Skip doctor - it strips valid discord config
+# openclaw doctor --fix 2>/dev/null || echo "Doctor not available or failed (non-fatal)"
+echo "Skipping doctor (was stripping discord config)"
 
 echo "=== Auto-healing complete ==="
 
@@ -34,15 +34,6 @@ node -e "
   // Override paths for production
   config.agents.defaults.workspace = '/app/workspace';
   config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
-
-  // Ensure Discord config is complete (doctor may strip it)
-  config.channels = config.channels || {};
-  config.channels.discord = {
-    dmPolicy: 'allow',
-    botToken: '\${DISCORD_BOT_TOKEN}',
-    groupPolicy: 'allowlist',
-    allowGroups: ['1225316369663262851']
-  };
 
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
   console.log('Config updated for production');
