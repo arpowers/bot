@@ -55,7 +55,7 @@
   },
   "hooks": {
     "enabled": true,
-    "token": "${MOLTBOT_WEBHOOK_TOKEN}"
+    "token": "${WEBHOOK_TOKEN}"
   },
   "skills": {
     "load": {

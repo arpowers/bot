@@ -26,7 +26,7 @@ jobs:
         if: failure()
         run: |
           curl -X POST "https://assist.andrewpowers.com/hooks/agent" \
-            -H "Authorization: Bearer ${{ secrets.MOLTBOT_WEBHOOK_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
               "message": "CI deploy failed for commit ${{ github.sha }}. Check https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} - clone repo, diagnose, and push a fix.",
