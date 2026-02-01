@@ -1,9 +1,11 @@
 FROM node:22-slim
 
-# Install dependencies
+# Install dependencies + Himalaya for email
 RUN apt-get update && apt-get install -y git curl tini fuse3 unzip && rm -rf /var/lib/apt/lists/* \
     && curl https://rclone.org/install.sh | bash \
-    && npm install -g openclaw@latest mcporter
+    && npm install -g openclaw@latest mcporter \
+    && curl -sSL https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.x86_64-linux.tgz \
+       | tar -xzC /usr/local/bin
 
 WORKDIR /app
 
@@ -13,8 +15,12 @@ COPY .openclaw/ .openclaw/
 # Copy skills
 COPY skills/ skills/
 
+# Copy Himalaya config
+COPY config/himalaya.toml /etc/himalaya/config.toml
+
 # Create workspace mount point and config dir
-RUN mkdir -p workspace config
+RUN mkdir -p workspace config /root/.config/himalaya \
+    && ln -s /etc/himalaya/config.toml /root/.config/himalaya/config.toml
 
 # Copy entrypoint
 COPY entrypoint.sh ./
