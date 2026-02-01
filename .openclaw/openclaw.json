@@ -42,7 +42,12 @@
       "streamMode": "partial"
     },
     "discord": {
-      "groupPolicy": "open"
+      "groupPolicy": "open",
+      "dm": {
+        "enabled": true,
+        "policy": "open",
+        "allowFrom": ["*"]
+      }
     }
   },
   "gateway": {
