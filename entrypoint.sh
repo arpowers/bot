@@ -8,6 +8,23 @@ cleanup() {
 }
 trap cleanup 15 2 3
 
+echo "=== Pre-deploy auto-healing ==="
+
+# Clear stale locks that can cause startup failures
+echo "Clearing stale locks..."
+find /app -name "*.lock" -delete 2>/dev/null || true
+find /data -name "*.lock" -delete 2>/dev/null || true
+
+# Kill orphaned MCP processes from previous runs
+echo "Killing orphaned MCP processes..."
+pkill -f "npx.*-mcp" 2>/dev/null || true
+
+# Run openclaw doctor to auto-heal config issues
+echo "Running openclaw doctor..."
+openclaw doctor --fix 2>/dev/null || echo "Doctor not available or failed (non-fatal)"
+
+echo "=== Auto-healing complete ==="
+
 # Apply prod path overrides to config
 echo "Applying production config..."
 node -e "

@@ -1,0 +1,17 @@
+{
+  "name": "ap-bot",
+  "version": "1.0.0",
+  "description": "Personal AI assistant on OpenClaw",
+  "scripts": {
+    "start": "openclaw gateway run",
+    "deploy": "git push",
+    "deploy:force": "fly deploy --remote-only --no-cache",
+    "deploy:check": "./scripts/check-deploy.sh",
+    "deploy:check:wait": "./scripts/check-deploy.sh --wait",
+    "deploy:logs": "fly logs --app ap-assist-agent",
+    "deploy:restart": "fly machines restart --app ap-assist-agent",
+    "deploy:ssh": "fly ssh console --app ap-assist-agent",
+    "deploy:status": "fly status --app ap-assist-agent"
+  },
+  "private": true
+}

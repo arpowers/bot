@@ -181,8 +181,43 @@ ls -la /app/workspace/
 - Daily analytics/calendar briefing
 - Sales task coaching
 
+## Cost Controls
+
+### Perplexity API
+
+**Always use `sonar` model by default.** Only use expensive models when explicitly requested.
+
+| Model | Cost | When to Use |
+|-------|------|-------------|
+| `sonar` | $0.006 | **DEFAULT** - 95% of queries |
+| `sonar-pro` | $0.02 | Only if sonar insufficient |
+| `sonar-deep-research` | $0.40-1.30 | ONLY if user says "deep research" |
+
+**Trigger phrases for expensive models:**
+- "deep research" → sonar-deep-research
+- "comprehensive analysis" → sonar-deep-research
+- "thoroughly investigate" → sonar-deep-research
+
+All other research queries → `sonar`
+
+See `skills/research/SKILL.md` for full guidelines.
+
 ## Reference
 
-- `overview.md` - Full project context, use cases, specs
-- `plans/` - Implementation specs for each feature
-- OpenClaw docs: https://docs.openclaw.ai
+| Document | Purpose |
+|----------|---------|
+| `plans/spec-deploy.md` | Deployment procedures, common failures, auto-healing |
+| `skills/*/SKILL.md` | Skill definitions and usage |
+| `workspace/mcporter.json` | MCP server config |
+| OpenClaw docs | https://docs.openclaw.ai |
+
+## npm Commands
+
+```bash
+npm run deploy           # Push to main (triggers CI)
+npm run deploy:force     # Force rebuild without cache
+npm run deploy:check     # Check deploy health
+npm run deploy:logs      # View cloud logs
+npm run deploy:restart   # Restart machine
+npm run deploy:ssh       # SSH into container
+```
