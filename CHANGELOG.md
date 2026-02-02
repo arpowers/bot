@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-02-02
+
+### Skills Routing & Knowledge System
+
+- Added skill routing heuristics to `workspace/SOUL.md`
+- Moved skills to Google Drive (`workspace/skills/`) for bot self-modification
+  - `social-media` - Split into SKILL.md (heuristics) + EXAMPLES.md
+  - `images` - Split into SKILL.md (heuristics) + EXAMPLES.md
+  - `book-notes` - New skill for Kindle highlights
+
+### Standards Directory
+
+Created `workspace/standards/` with adapted principles:
+- `core.md` - First principles, YAGNI, simplicity
+- `writing-style.md` - Voice: Tony Robbins meets Steve Jobs
+- `copywriting.md` - Claude Hopkins principles
+- `design-ui.md` - Swiss minimalism, Tufte data-ink ratio
+
+### Book Notes System
+
+- Created `scripts/export-readwise.sh` to export all Kindle highlights
+- Exported 463 books to `workspace/book-notes/` (snake_case filenames)
+- Added `READWISE_ACCESS_TOKEN` to .env, Fly.io, GitHub
+- Highlights stored as markdown files, no API calls needed
+
+### OpenClaw
+
+- Updated to 2026.2.1
+- Updated Dockerfile cache-bust comment
+
 ## 2026-02-01
 
 ### Discord Channel
