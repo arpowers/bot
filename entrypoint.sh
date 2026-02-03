@@ -65,6 +65,16 @@ EOF
     cp /app/workspace/mcporter.json /app/config/mcporter.json
     echo "Loaded mcporter.json from workspace"
   fi
+
+  # Install npm deps for workspace skills
+  echo "Installing workspace skill dependencies..."
+  for pkg in /app/workspace/skills/*/package.json; do
+    if [ -f "$pkg" ]; then
+      dir=$(dirname "$pkg")
+      echo "Installing deps in $dir"
+      (cd "$dir" && npm install --omit=dev 2>/dev/null) || echo "Failed to install deps in $dir"
+    fi
+  done
 else
   echo "WARNING: No Google Drive - workspace won't persist!"
 fi
