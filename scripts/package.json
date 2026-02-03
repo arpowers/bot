@@ -1,0 +1,7 @@
+{
+  "name": "bot-scripts",
+  "type": "module",
+  "dependencies": {
+    "midjourney": "^4.0.0"
+  }
+}
