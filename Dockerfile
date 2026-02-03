@@ -1,7 +1,7 @@
 FROM node:22-slim
 
 # Install dependencies + Himalaya + GitHub CLI + yt-dlp
-# OpenClaw 2026.2.3 - fixed midjourney local install
+# OpenClaw 2026.2.4 - midjourney deps in skill directory
 RUN apt-get update && apt-get install -y git curl tini fuse3 unzip python3 python3-pip && rm -rf /var/lib/apt/lists/* \
     && pip3 install --break-system-packages yt-dlp \
     && curl https://rclone.org/install.sh | bash \
@@ -19,9 +19,8 @@ COPY .openclaw/ .openclaw/
 # Copy skills
 COPY skills/ skills/
 
-# Copy scripts and install dependencies
+# Copy scripts
 COPY scripts/ scripts/
-RUN cd scripts && npm install && cd ..
 
 # Copy Himalaya config
 COPY config/himalaya.toml /etc/himalaya/config.toml
