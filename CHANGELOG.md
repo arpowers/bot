@@ -2,6 +2,18 @@
 
 ## 2026-02-02
 
+### Midjourney Integration
+
+- Added `midjourney` npm package to Dockerfile for automated image generation
+- Created `scripts/midjourney.js` for Discord-based Midjourney API access
+- Updated `images/SKILL.md` with Midjourney automation instructions
+- Set up secrets: `SALAI_TOKEN`, `MJ_SERVER_ID`, `MJ_CHANNEL_ID` (Fly.io, .env, GitHub)
+
+### Attio CRM
+
+- Created `workspace/skills/attio/SKILL.md` with full Attio API reference
+- Set up `ATTIO_API_KEY` (Fly.io, .env, GitHub)
+
 ### ClawHub Skills
 
 Installed from ClawHub registry:
