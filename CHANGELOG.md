@@ -4,9 +4,11 @@
 
 ### Midjourney Integration
 
-- Added `midjourney` npm package to Dockerfile for automated image generation
-- Created `scripts/midjourney.js` for Discord-based Midjourney API access
-- Updated `images/SKILL.md` with Midjourney automation instructions
+- Created `/midjourney` skill at `workspace/skills/midjourney/`
+  - `SKILL.md` - Usage instructions
+  - `package.json` - Declares `midjourney@4` dependency
+  - `generate.js` - Script for Discord-based image generation
+- Entrypoint auto-installs npm deps for workspace skills with package.json
 - Set up secrets: `SALAI_TOKEN`, `MJ_SERVER_ID`, `MJ_CHANNEL_ID` (Fly.io, .env, GitHub)
 
 ### Attio CRM

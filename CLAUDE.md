@@ -130,9 +130,12 @@ The bot can modify its own capabilities without redeploying:
 |------|----------|-----|
 | MCP servers | `workspace/mcporter.json` | Edit JSON, restart gateway |
 | Dynamic skills | `workspace/skills/` | Create SKILL.md |
+| Skill npm deps | `workspace/skills/<name>/package.json` | Add package.json, redeploy |
 | Memory | `workspace/*.md` | Edit directly |
 
 These are on Google Drive and sync instantly. No git push or deploy needed.
+
+**Skill Dependencies:** Skills can have their own `package.json`. The entrypoint auto-runs `npm install` for workspace skills with package.json after Google Drive mounts.
 
 For core changes (gateway config, baked-in skills), use git commit → auto-deploy.
 
