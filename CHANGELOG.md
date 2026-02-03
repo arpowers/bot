@@ -2,6 +2,21 @@
 
 ## 2026-02-02
 
+### ClawHub Skills
+
+Installed from ClawHub registry:
+- `ai-humanizer` - 24 AI writing pattern detectors, vocabulary tiers (trimmed to heuristics only)
+- `youtube-watcher` - YouTube transcript fetching via yt-dlp
+- `clawdbot-security-check` - 13-domain security audit framework
+
+Removed:
+- `marketing-mode` - Too verbose (encyclopedia, not heuristics)
+- `deep-research` - Requires paid CRAFTED_API_KEY
+
+### Dockerfile
+
+- Added `python3`, `python3-pip`, `yt-dlp` for YouTube transcript support
+
 ### Skills Routing & Knowledge System
 
 - Added skill routing heuristics to `workspace/SOUL.md`

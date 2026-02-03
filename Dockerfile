@@ -1,8 +1,9 @@
 FROM node:22-slim
 
-# Install dependencies + Himalaya + GitHub CLI
+# Install dependencies + Himalaya + GitHub CLI + yt-dlp
 # OpenClaw 2026.2.1 - bust cache for updates
-RUN apt-get update && apt-get install -y git curl tini fuse3 unzip && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update && apt-get install -y git curl tini fuse3 unzip python3 python3-pip && rm -rf /var/lib/apt/lists/* \
+    && pip3 install --break-system-packages yt-dlp \
     && curl https://rclone.org/install.sh | bash \
     && npm install -g openclaw@latest mcporter@latest \
     && curl -sSL https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.x86_64-linux.tgz \
