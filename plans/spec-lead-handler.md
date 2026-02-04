@@ -116,19 +116,25 @@ Process inbound leads. Decide if CRM-worthy, enrich, draft response, confirm bef
 
 ## Webhook Payload
 
+See `plans/spec-webhooks.md` for full webhook documentation.
+
+**Endpoint:** `POST /hooks/agent`
+
 ```json
 {
-  "message": "New lead: John Smith from Acme Corp, requested demo via website",
-  "name": "Lead",
+  "message": "New PageLines lead submission:\n\nEmail: john@acme.com\nLinkedIn: linkedin.com/in/johnsmith\nNotes: Requested demo via website\n\nPlease qualify this lead and draft a personalized response.",
+  "name": "PageLines Lead",
   "deliver": true,
-  "channel": "telegram",
-  "metadata": {
-    "source": "website_form",
-    "email": "john@acme.com",
-    "company": "Acme Corp"
-  }
+  "channel": "telegram"
 }
 ```
+
+| Field | Value | Purpose |
+|-------|-------|---------|
+| `message` | Formatted lead details | Prompt for agent |
+| `name` | "PageLines Lead" | Shows in session summaries |
+| `deliver` | true | Send response to Telegram |
+| `channel` | "telegram" | Delivery channel |
 
 ---
 

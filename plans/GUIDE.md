@@ -61,6 +61,14 @@ How we know it worked.
 - `research-*.md` — Analysis and feasibility studies
 - `_archive/` — Superseded docs (don't delete, move)
 
+## Key Specs
+
+| Spec | Purpose |
+|------|---------|
+| `spec-webhooks.md` | External HTTP triggers, endpoint formats, PageLines integration |
+| `spec-lead-handler.md` | Lead qualification workflow |
+| `spec-deploy.md` | Deployment procedures |
+
 ---
 
 ## Updating

@@ -184,6 +184,22 @@ ls -la /app/workspace/
 - Daily analytics/calendar briefing
 - Sales task coaching
 
+## Webhooks
+
+External triggers via HTTP. See `plans/spec-webhooks.md` for full documentation.
+
+**Quick reference:**
+
+| Endpoint | Purpose | Response |
+|----------|---------|----------|
+| `POST /hooks/wake` | System event for main session | 200 |
+| `POST /hooks/agent` | Isolated agent turn | 202 |
+
+**PageLines integration:**
+- URL: `https://assist.andrewpowers.com/hooks/agent`
+- Auth: `Authorization: Bearer ${WEBHOOK_TOKEN}`
+- Token must match in both PageLines and bot Fly.io secrets
+
 ## Cost Controls
 
 ### Perplexity API
