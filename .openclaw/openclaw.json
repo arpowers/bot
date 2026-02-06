@@ -76,6 +76,13 @@
         "policy": "open",
         "allowFrom": ["*"]
       }
+    },
+    "signal": {
+      "enabled": true,
+      "account": "+19492572803",
+      "cliPath": "signal-cli",
+      "dmPolicy": "pairing",
+      "allowFrom": ["+18016943985"]
     }
   },
   "gateway": {
