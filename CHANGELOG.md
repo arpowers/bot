@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-02-15
+
+### Memory System
+
+- Switched embeddings from Gemini (`gemini-embedding-001`) to Voyage AI (`voyage-3`)
+- Uses OpenAI-compatible provider with Voyage API directly
+- Replaced Gemini model fallback with `anthropic/claude-haiku-4-5`
+
+### Skills
+
+- Added `productivity-monitor` skill
+
 ## 2026-02-02
 
 ### Midjourney Integration

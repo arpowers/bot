@@ -5,7 +5,7 @@
         "primary": "anthropic/claude-opus-4-5",
         "fallbacks": [
           "anthropic/claude-sonnet-4-5",
-          "google/gemini-2.0-flash"
+          "anthropic/claude-haiku-4-5"
         ]
       },
       "workspace": "./workspace",
@@ -20,11 +20,12 @@
       },
       "memorySearch": {
         "enabled": true,
-        "provider": "gemini",
-        "model": "gemini-embedding-001",
+        "provider": "openai",
+        "model": "voyage-3",
         "fallback": "none",
         "remote": {
-          "apiKey": "${GEMINI_API_KEY}"
+          "baseUrl": "https://api.voyageai.com/v1/",
+          "apiKey": "${VOYAGE_API_KEY}"
         },
         "query": {
           "hybrid": {
