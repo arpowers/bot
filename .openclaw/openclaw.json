@@ -72,11 +72,8 @@
     },
     "discord": {
       "groupPolicy": "open",
-      "dm": {
-        "enabled": true,
-        "policy": "open",
-        "allowFrom": ["*"]
-      }
+      "dmPolicy": "open",
+      "allowFrom": ["*"]
     },
     "signal": {
       "enabled": true,
