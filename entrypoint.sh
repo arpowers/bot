@@ -35,10 +35,10 @@ node -e "
   config.agents.defaults.workspace = '/app/workspace';
   config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
 
-  // Disable signal channel in prod (signal-cli not installed)
+  // Remove signal channel in prod (signal-cli not installed, openclaw auto-enables it)
   if (config.channels && config.channels.signal) {
-    config.channels.signal.enabled = false;
-    console.log('Disabled signal channel (not available in prod)');
+    delete config.channels.signal;
+    console.log('Removed signal channel (not available in prod)');
   }
 
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
