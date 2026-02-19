@@ -35,6 +35,12 @@ node -e "
   config.agents.defaults.workspace = '/app/workspace';
   config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
 
+  // Disable signal channel in prod (signal-cli not installed)
+  if (config.channels && config.channels.signal) {
+    config.channels.signal.enabled = false;
+    console.log('Disabled signal channel (not available in prod)');
+  }
+
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
   console.log('Config updated for production');
 "
@@ -80,6 +86,5 @@ else
 fi
 
 # Run gateway
-echo "Starting openclaw gateway (version: $(openclaw --version 2>&1 || echo 'unknown'))..."
-echo "Binding to 0.0.0.0:3000"
+echo "Starting openclaw gateway..."
 exec openclaw gateway run --port 3000 --bind 0.0.0.0 --allow-unconfigured
