@@ -41,6 +41,16 @@ node -e "
     console.log('Removed signal channel (not available in prod)');
   }
 
+  // Ensure hooks.token differs from gateway auth token (openclaw requirement)
+  if (config.hooks && config.gateway && config.gateway.auth) {
+    const gwToken = config.gateway.auth.token;
+    const hookToken = config.hooks.token;
+    if (gwToken && hookToken && gwToken === hookToken) {
+      config.hooks.token = hookToken + '-hooks';
+      console.log('Fixed hooks.token to differ from gateway token');
+    }
+  }
+
   fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
   console.log('Config updated for production');
 "
