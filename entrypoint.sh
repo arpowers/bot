@@ -42,11 +42,13 @@ node -e "
   }
 
   // Ensure hooks.token differs from gateway auth token (openclaw requirement)
+  // Resolve env var templates to compare actual values
+  const resolve = (s) => (s || '').replace(/\\$\\{(\\w+)\\}/g, (_, k) => process.env[k] || '');
   if (config.hooks && config.gateway && config.gateway.auth) {
-    const gwToken = config.gateway.auth.token;
-    const hookToken = config.hooks.token;
-    if (gwToken && hookToken && gwToken === hookToken) {
-      config.hooks.token = hookToken + '-hooks';
+    const gwVal = resolve(config.gateway.auth.token);
+    const hookVal = resolve(config.hooks.token);
+    if (gwVal && hookVal && gwVal === hookVal) {
+      config.hooks.token = (config.hooks.token || 'hook') + '-hooks';
       console.log('Fixed hooks.token to differ from gateway token');
     }
   }
