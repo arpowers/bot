@@ -87,4 +87,4 @@ fi
 
 # Run gateway
 echo "Starting openclaw gateway..."
-exec openclaw gateway run --port 3000 --bind 0.0.0.0 --allow-unconfigured
+exec openclaw gateway run --port 3000 --bind lan --allow-unconfigured
