@@ -80,4 +80,6 @@ else
 fi
 
 # Run gateway
-exec openclaw gateway run --port 3000 --bind lan --allow-unconfigured
+echo "Starting openclaw gateway (version: $(openclaw --version 2>&1 || echo 'unknown'))..."
+echo "Binding to 0.0.0.0:3000"
+exec openclaw gateway run --port 3000 --bind 0.0.0.0 --allow-unconfigured
