@@ -1,7 +1,6 @@
 FROM node:22-slim
 
 # Install dependencies + Himalaya + GitHub CLI + yt-dlp
-# OpenClaw 2026.2.19 - midjourney deps in skill directory
 RUN apt-get update && apt-get install -y git curl tini fuse3 unzip python3 python3-pip && rm -rf /var/lib/apt/lists/* \
     && pip3 install --break-system-packages yt-dlp \
     && curl https://rclone.org/install.sh | bash \
@@ -28,6 +27,13 @@ COPY config/himalaya.toml /etc/himalaya/config.toml
 # Create workspace mount point and config dir
 RUN mkdir -p workspace config /root/.config/himalaya \
     && ln -s /etc/himalaya/config.toml /root/.config/himalaya/config.toml
+
+# Bake build metadata
+COPY package.json ./
+ARG GIT_SHA=unknown
+ARG BUILD_ID=0
+ENV GIT_SHA=${GIT_SHA}
+ENV BUILD_ID=${BUILD_ID}
 
 # Copy entrypoint
 COPY entrypoint.sh ./
