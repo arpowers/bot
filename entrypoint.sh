@@ -182,6 +182,36 @@ fi
 # ── Ensure Hermes dirs exist ──
 mkdir -p /root/.hermes/{cron,sessions,logs,memories,skills,pairing,hooks,image_cache,audio_cache}
 
+# ── Health check server (Fly.io needs HTTP on port 3000) ──
+echo "Starting health check server on port 3000..."
+python3 -c "
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading, os
+
+class Health(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(b'{\"status\":\"ok\",\"agent\":\"hermes\",\"version\":\"' + os.environ.get('GIT_SHA','unknown').encode()[:8] + b'\"}')
+    def log_message(self, *args):
+        pass  # suppress access logs
+
+server = HTTPServer(('0.0.0.0', 3000), Health)
+threading.Thread(target=server.serve_forever, daemon=True).start()
+
+# Block — the gateway runs via exec below
+import time
+while True:
+    time.sleep(86400)
+" &
+HEALTH_PID=$!
+sleep 1
+
 # ── Start Hermes gateway ──
 echo "Starting Hermes gateway..."
-exec hermes gateway
+hermes gateway &
+GATEWAY_PID=$!
+
+# Wait for either process to exit
+wait -n $HEALTH_PID $GATEWAY_PID 2>/dev/null || wait $GATEWAY_PID

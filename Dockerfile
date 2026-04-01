@@ -24,6 +24,10 @@ RUN git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.
     && VIRTUAL_ENV=/opt/hermes-venv uv pip install -e ".[all]" \
     && ln -sf /opt/hermes-venv/bin/hermes /usr/local/bin/hermes
 
+# Ensure venv Python is available for entrypoint scripts
+ENV PATH="/opt/hermes-venv/bin:$PATH"
+ENV VIRTUAL_ENV="/opt/hermes-venv"
+
 WORKDIR /app
 
 # Copy Hermes config
