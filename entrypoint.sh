@@ -159,15 +159,14 @@ EOF
     echo "Linked SOUL.md from workspace"
   fi
 
-  # Symlink memories from workspace
+  # Symlink memories from workspace (non-fatal)
   if [ -d /app/workspace/memory ]; then
-    ln -sf /app/workspace/memory/* /root/.hermes/memories/ 2>/dev/null || true
+    for f in /app/workspace/memory/*; do
+      [ -f "$f" ] && ln -sf "$f" /root/.hermes/memories/ 2>/dev/null
+    done
     echo "Linked workspace memories"
   fi
-  if [ -f /app/workspace/MEMORY.md ]; then
-    ln -sf /app/workspace/MEMORY.md /root/.hermes/memories/MEMORY.md
-    echo "Linked MEMORY.md from workspace"
-  fi
+  [ -f /app/workspace/MEMORY.md ] && ln -sf /app/workspace/MEMORY.md /root/.hermes/memories/MEMORY.md 2>/dev/null && echo "Linked MEMORY.md" || true
 
   # Install npm deps for workspace skills
   echo "Installing workspace skill dependencies..."
