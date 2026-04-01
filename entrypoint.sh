@@ -5,7 +5,6 @@ set -e
 notify_error() {
     local msg="$1"
     echo "[FATAL] $msg"
-    # Send to Discord webhook if configured
     if [ -n "$DISCORD_ERROR_WEBHOOK" ]; then
         curl -sf -X POST "$DISCORD_ERROR_WEBHOOK" \
             -H "Content-Type: application/json" \
@@ -30,7 +29,6 @@ PAYLOAD
     fi
 }
 
-# Wrapper: run a command, notify + exit on failure
 fatal_on_fail() {
     local label="$1"
     shift
@@ -57,15 +55,15 @@ cleanup() {
 trap cleanup 15 2 3
 trap on_exit EXIT
 
-# ── Version info (for diagnosing deploy issues) ──
+# ── Version info ──
 echo "=== Versions ==="
-BOT_VERSION=$(node -p "require('/app/package.json').version" 2>/dev/null || echo "unknown")
+BOT_VERSION=$(python3 -c "import json; print(json.load(open('/app/package.json'))['version'])" 2>/dev/null || echo "unknown")
 echo "[versions] ap-bot: ${BOT_VERSION}"
 echo "[versions] git-sha: ${GIT_SHA:-unknown}"
 echo "[versions] build-id: ${BUILD_ID:-0}"
-echo "[versions] openclaw: $(openclaw --version 2>/dev/null || echo 'not found')"
-echo "[versions] mcporter: $(mcporter --version 2>/dev/null || echo 'not found')"
+echo "[versions] hermes: $(hermes version 2>/dev/null || echo 'not found')"
 echo "[versions] node: $(node --version 2>/dev/null || echo 'not found')"
+echo "[versions] python: $(python3 --version 2>/dev/null || echo 'not found')"
 echo "[versions] himalaya: $(himalaya --version 2>/dev/null || echo 'not found')"
 echo "[versions] rclone: $(rclone version --check 2>/dev/null | head -1 || rclone --version 2>/dev/null | head -1 || echo 'not found')"
 echo "[versions] yt-dlp: $(yt-dlp --version 2>/dev/null || echo 'not found')"
@@ -76,63 +74,56 @@ echo "=== Environment ==="
 echo "[env] FLY_APP_NAME=${FLY_APP_NAME:-unset}"
 echo "[env] FLY_REGION=${FLY_REGION:-unset}"
 echo "[env] FLY_MACHINE_ID=${FLY_MACHINE_ID:-unset}"
-echo "[env] FLY_IMAGE_REF=${FLY_IMAGE_REF:-unset}"
-echo "[env] OPENCLAW_STATE_DIR=${OPENCLAW_STATE_DIR:-unset}"
-echo "[env] ANTHROPIC_API_KEY=$([ -n "$ANTHROPIC_API_KEY" ] && echo 'set' || echo 'MISSING')"
+echo "[env] OPENROUTER_API_KEY=$([ -n "$OPENROUTER_API_KEY" ] && echo 'set' || echo 'MISSING')"
 echo "[env] TELEGRAM_BOT_TOKEN=$([ -n "$TELEGRAM_BOT_TOKEN" ] && echo 'set' || echo 'MISSING')"
-echo "[env] GATEWAY_TOKEN=$([ -n "$GATEWAY_TOKEN" ] && echo 'set' || echo 'unset')"
 echo "[env] RCLONE_CONFIG_GDRIVE_TOKEN=$([ -n "$RCLONE_CONFIG_GDRIVE_TOKEN" ] && echo 'set' || echo 'MISSING')"
 
 echo "=== Auto-healing ==="
 
-# Clear stale locks that can cause startup failures
+# Clear stale locks
 echo "Clearing stale locks..."
 find /app -name "*.lock" -delete 2>/dev/null || true
-find /data -name "*.lock" -delete 2>/dev/null || true
+find /root/.hermes -name "*.lock" -delete 2>/dev/null || true
 
-# Kill orphaned MCP processes from previous runs
+# Kill orphaned MCP processes
 echo "Killing orphaned MCP processes..."
 pkill -f "npx.*-mcp" 2>/dev/null || true
 
-# Skip doctor - it strips valid discord config
-# openclaw doctor --fix 2>/dev/null || echo "Doctor not available or failed (non-fatal)"
-echo "Skipping doctor (was stripping discord config)"
-
 echo "=== Auto-healing complete ==="
 
-# Apply prod path overrides to config
+# ── Apply production overrides to Hermes config ──
 echo "Applying production config..."
-node -e "
-  const fs = require('fs');
-  const config = JSON.parse(fs.readFileSync('/app/.openclaw/openclaw.json'));
+python3 -c "
+import yaml, os
 
-  // Override paths for production
-  config.agents.defaults.workspace = '/app/workspace';
-  config.skills.load.extraDirs = ['/app/skills', '/app/workspace/skills'];
+config_path = os.path.expanduser('~/.hermes/config.yaml')
+with open(config_path) as f:
+    config = yaml.safe_load(f)
 
-  // Remove signal channel in prod (signal-cli not installed, openclaw auto-enables it)
-  if (config.channels && config.channels.signal) {
-    delete config.channels.signal;
-    console.log('Removed signal channel (not available in prod)');
-  }
+# Override skill dirs for production paths
+config.setdefault('skills', {})
+config['skills']['external_dirs'] = ['/app/skills', '/app/workspace/skills']
 
-  // Ensure hooks.token differs from gateway auth token (openclaw requirement)
-  // Resolve env var templates to compare actual values
-  const resolve = (s) => (s || '').replace(/\\$\\{(\\w+)\\}/g, (_, k) => process.env[k] || '');
-  if (config.hooks && config.gateway && config.gateway.auth) {
-    const gwVal = resolve(config.gateway.auth.token);
-    const hookVal = resolve(config.hooks.token);
-    if (gwVal && hookVal && gwVal === hookVal) {
-      config.hooks.token = (config.hooks.token || 'hook') + '-hooks';
-      console.log('Fixed hooks.token to differ from gateway token');
-    }
-  }
+# Write back
+with open(config_path, 'w') as f:
+    yaml.dump(config, f, default_flow_style=False, sort_keys=False)
 
-  fs.writeFileSync('/app/.openclaw/openclaw.json', JSON.stringify(config, null, 2));
-  console.log('Config updated for production');
-" || { notify_error "Config patching failed"; NOTIFIED=1; exit 1; }
+print('Config updated for production')
+"
 
-# Mount Google Drive for shared workspace
+# ── Write .env from Fly.io secrets ──
+echo "Writing Hermes .env from environment..."
+cat > /root/.hermes/.env << ENVEOF
+OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+TELEGRAM_ALLOWED_USERS=${TELEGRAM_ALLOWED_USERS:-5810543997}
+DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+VOYAGE_API_KEY=${VOYAGE_API_KEY}
+GITHUB_TOKEN=${GITHUB_TOKEN}
+ENVEOF
+
+# ── Mount Google Drive for shared workspace ──
 if [ -n "$RCLONE_CONFIG_GDRIVE_TOKEN" ]; then
   echo "Mounting Google Drive..."
   mkdir -p /root/.config/rclone
@@ -156,11 +147,20 @@ EOF
   echo "Google Drive mounted"
   ls -la /app/workspace/ 2>/dev/null || echo "Workspace empty"
 
-  # Copy bot-editable configs from workspace
-  if [ -f /app/workspace/mcporter.json ]; then
-    mkdir -p /app/config
-    cp /app/workspace/mcporter.json /app/config/mcporter.json
-    echo "Loaded mcporter.json from workspace"
+  # Symlink SOUL.md from workspace to Hermes config dir
+  if [ -f /app/workspace/SOUL.md ]; then
+    ln -sf /app/workspace/SOUL.md /root/.hermes/SOUL.md
+    echo "Linked SOUL.md from workspace"
+  fi
+
+  # Symlink memories from workspace
+  if [ -d /app/workspace/memory ]; then
+    ln -sf /app/workspace/memory/* /root/.hermes/memories/ 2>/dev/null || true
+    echo "Linked workspace memories"
+  fi
+  if [ -f /app/workspace/MEMORY.md ]; then
+    ln -sf /app/workspace/MEMORY.md /root/.hermes/memories/MEMORY.md
+    echo "Linked MEMORY.md from workspace"
   fi
 
   # Install npm deps for workspace skills
@@ -174,9 +174,11 @@ EOF
   done
 else
   notify_error "RCLONE_CONFIG_GDRIVE_TOKEN not set — workspace won't persist"
-  # Continue anyway, non-fatal
 fi
 
-# Run gateway
-echo "Starting openclaw gateway..."
-exec openclaw gateway run --port 3000 --bind lan --allow-unconfigured
+# ── Ensure Hermes dirs exist ──
+mkdir -p /root/.hermes/{cron,sessions,logs,memories,skills,pairing,hooks,image_cache,audio_cache}
+
+# ── Start Hermes gateway ──
+echo "Starting Hermes gateway..."
+exec hermes gateway
