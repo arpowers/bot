@@ -126,6 +126,9 @@ ENRICHLAYER_API_KEY=${ENRICHLAYER_API_KEY}
 TICKTICK_ACCESS_TOKEN=${TICKTICK_ACCESS_TOKEN}
 ENVEOF
 
+# ── Ensure Hermes dirs exist ──
+mkdir -p /root/.hermes/{cron,sessions,logs,memories,skills,pairing,hooks,image_cache,audio_cache}
+
 # ── Mount Google Drive for shared workspace ──
 if [ -n "$RCLONE_CONFIG_GDRIVE_TOKEN" ]; then
   echo "Mounting Google Drive..."
@@ -178,9 +181,6 @@ EOF
 else
   notify_error "RCLONE_CONFIG_GDRIVE_TOKEN not set — workspace won't persist"
 fi
-
-# ── Ensure Hermes dirs exist ──
-mkdir -p /root/.hermes/{cron,sessions,logs,memories,skills,pairing,hooks,image_cache,audio_cache}
 
 # ── Health check server (Fly.io needs HTTP on port 3000) ──
 echo "Starting health check server on port 3000..."
