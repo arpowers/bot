@@ -1,31 +1,45 @@
-FROM node:22-slim
+FROM python:3.11-slim
 
-# Install dependencies + Himalaya + GitHub CLI + yt-dlp
-RUN apt-get update && apt-get install -y git curl tini fuse3 unzip python3 python3-pip && rm -rf /var/lib/apt/lists/* \
-    && pip3 install --break-system-packages yt-dlp \
+# Install system deps + Node.js (for MCP npx servers + WhatsApp)
+RUN apt-get update && apt-get install -y \
+    git curl tini fuse3 unzip ripgrep ffmpeg \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && pip install --no-cache-dir yt-dlp \
     && curl https://rclone.org/install.sh | bash \
-    && npm install -g openclaw@latest mcporter@latest \
-    && curl -sSL https://github.com/pimalaya/himalaya/releases/download/v1.1.0/himalaya.x86_64-linux.tgz \
+    && curl -sSL https://github.com/pimalaya/himalaya/releases/download/v1.2.0/himalaya.x86_64-linux.tgz \
        | tar -xzC /usr/local/bin \
-    && curl -sSL https://github.com/cli/cli/releases/download/v2.63.2/gh_2.63.2_linux_amd64.tar.gz \
-       | tar -xzC /tmp && mv /tmp/gh_2.63.2_linux_amd64/bin/gh /usr/local/bin/
+    && curl -sSL https://github.com/cli/cli/releases/download/v2.88.1/gh_2.88.1_linux_amd64.tar.gz \
+       | tar -xzC /tmp && mv /tmp/gh_2.88.1_linux_amd64/bin/gh /usr/local/bin/
+
+# Install uv (fast Python package manager)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
+
+# Clone and install Hermes Agent
+RUN git clone --recurse-submodules https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent \
+    && cd /opt/hermes-agent \
+    && uv venv /opt/hermes-venv --python 3.11 \
+    && VIRTUAL_ENV=/opt/hermes-venv uv pip install -e ".[all]" \
+    && ln -sf /opt/hermes-venv/bin/hermes /usr/local/bin/hermes
 
 WORKDIR /app
 
-# Copy OpenClaw state/config
-COPY .openclaw/ .openclaw/
+# Copy Hermes config
+COPY .hermes/ /root/.hermes/
 
 # Copy skills
-COPY skills/ skills/
+COPY skills/ /app/skills/
 
 # Copy scripts
-COPY scripts/ scripts/
+COPY scripts/ /app/scripts/
 
 # Copy Himalaya config
 COPY config/himalaya.toml /etc/himalaya/config.toml
 
-# Create workspace mount point and config dir
-RUN mkdir -p workspace config /root/.config/himalaya \
+# Create workspace mount point and config dirs
+RUN mkdir -p /app/workspace /root/.config/himalaya \
     && ln -s /etc/himalaya/config.toml /root/.config/himalaya/config.toml
 
 # Bake build metadata
@@ -39,8 +53,9 @@ ENV BUILD_ID=${BUILD_ID}
 COPY entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
-# Set state directory
-ENV OPENCLAW_STATE_DIR=/app/.openclaw
+# Hermes uses ~/.hermes/ for state (already set up above)
+# Set working dir for gateway sessions
+ENV MESSAGING_CWD=/app
 
 EXPOSE 3000
 
