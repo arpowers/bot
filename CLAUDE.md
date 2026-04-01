@@ -1,22 +1,22 @@
 # AP Bot
 
-Personal AI assistant on OpenClaw. Local dev, cloud deploy, shared memory.
+Personal AI assistant on Hermes Agent. Local dev, cloud deploy, shared memory.
 
 ## Quick Reference
 
 | Task | Command |
 |------|---------|
-| Run local | `openclaw gateway run` |
+| Run local | `hermes gateway` |
 | Deploy | `git push` (auto via GitHub Actions) |
 | Cloud logs | `fly logs --app ap-assist-agent` |
-| Approve pairing | `openclaw pairing approve telegram <code>` |
+| Approve pairing | `hermes pairing approve telegram <code>` |
 
 ## Architecture
 
 ```
-bot/                              # Git repo = OpenClaw state dir
-├── .openclaw/                    # OpenClaw state (OPENCLAW_STATE_DIR points here)
-│   ├── openclaw.json             # Single config file (version controlled)
+bot/                              # Git repo = Hermes Agent state dir
+├── .hermes/                      # Hermes Agent state
+│   ├── config.yaml               # Single config file (version controlled)
 │   ├── agents/                   # Runtime state (gitignored)
 │   ├── credentials/              # Auth tokens (gitignored)
 │   └── telegram/                 # Pairing data (gitignored)
@@ -40,18 +40,16 @@ Google Drive (shared persistence)
 
 ## Config System
 
-**Single config file:** `.openclaw/openclaw.json`
+**Single config file:** `.hermes/config.yaml` (YAML format)
 
 - Uses relative paths (`./workspace`, `./skills`) for local
 - `entrypoint.sh` patches to absolute paths (`/app/workspace`, `/app/skills`) for prod
 - No separate prod config file needed
 
 ```bash
-# Local: env var in .env
-OPENCLAW_STATE_DIR="./.openclaw"
-
+# Hermes defaults to ~/.hermes/ but can be overridden via MESSAGING_CWD
 # Cloud: env var in Dockerfile
-ENV OPENCLAW_STATE_DIR=/app/.openclaw
+ENV MESSAGING_CWD=/app
 ```
 
 ## Persistence (Google Drive)
@@ -99,18 +97,18 @@ The `ANTHROPIC_API_KEY` env var holds the OAuth token, not a raw API key.
 
 Both use `dmPolicy: "pairing"` - first message returns a pairing code, approve with:
 ```bash
-openclaw pairing approve telegram <code>
+hermes pairing approve telegram <code>
 ```
 
 ## Deployment
 
 1. Push to main branch
 2. GitHub Actions runs `flyctl deploy --remote-only --yes`
-3. Dockerfile copies `.openclaw/` and `skills/`
+3. Dockerfile copies `.hermes/` and `skills/`
 4. `entrypoint.sh`:
    - Patches config with prod paths
    - Mounts Google Drive via rclone
-   - Starts `openclaw gateway run`
+   - Starts `hermes gateway`
 
 ### Fly.io Secrets Required
 
@@ -128,7 +126,7 @@ The bot can modify its own capabilities without redeploying:
 
 | What | Location | How |
 |------|----------|-----|
-| MCP servers | `workspace/mcporter.json` | Edit JSON, restart gateway |
+| MCP servers | `mcp_servers section in .hermes/config.yaml` | Edit YAML, restart gateway |
 | Dynamic skills | `workspace/skills/` | Create SKILL.md |
 | Skill npm deps | `workspace/skills/<name>/package.json` | Add package.json, redeploy |
 | Memory | `workspace/*.md` | Edit directly |
@@ -143,8 +141,8 @@ For core changes (gateway config, baked-in skills), use git commit → auto-depl
 
 | File | Purpose |
 |------|---------|
-| `.openclaw/openclaw.json` | Gateway config (model, channels, skills) |
-| `workspace/mcporter.json` | MCP servers (bot-editable) |
+| `.hermes/config.yaml` | Gateway config (model, channels, skills) |
+| `mcp_servers section in .hermes/config.yaml` | MCP servers (bot-editable) |
 | `workspace/skills/` | Dynamic skills (bot-editable) |
 | `.env` | Local secrets (gitignored) |
 | `.env.example` | Template for .env |
@@ -157,7 +155,7 @@ For core changes (gateway config, baked-in skills), use git commit → auto-depl
 ## Conventions
 
 - **Skills:** SKILL.md files with YAML frontmatter
-- **Config:** JSON in `.openclaw/openclaw.json`
+- **Config:** YAML in `.hermes/config.yaml`
 - **Secrets:** Environment variables only, never in config files
 - **Paths:** Relative in config, patched to absolute at runtime for prod
 
@@ -165,7 +163,7 @@ For core changes (gateway config, baked-in skills), use git commit → auto-depl
 
 ```bash
 # Local logs
-openclaw gateway run  # Logs to stdout
+hermes gateway  # Logs to stdout
 
 # Cloud logs
 fly logs --app ap-assist-agent
@@ -227,8 +225,8 @@ See `skills/research/SKILL.md` for full guidelines.
 |----------|---------|
 | `plans/spec-deploy.md` | Deployment procedures, common failures, auto-healing |
 | `skills/*/SKILL.md` | Skill definitions and usage |
-| `workspace/mcporter.json` | MCP server config |
-| OpenClaw docs | https://docs.openclaw.ai |
+| `.hermes/config.yaml` | MCP server config (mcp_servers section) |
+| Hermes Agent docs | https://hermes-agent.nousresearch.com/docs/ |
 
 ## npm Commands
 
