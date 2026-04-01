@@ -1,6 +1,6 @@
 # AP Bot
 
-Personal AI assistant running on OpenClaw. Handles leads, email, analytics, calendar, sales coaching, social media, and workflow automation.
+Personal AI assistant running on Hermes Agent. Handles leads, email, analytics, calendar, sales coaching, social media, and workflow automation.
 
 **Local:** Runs on this machine, skills edited here
 **Cloud:** Deployed to Fly.io on push
@@ -38,8 +38,8 @@ Personal AI assistant running on OpenClaw. Handles leads, email, analytics, cale
 
 ```
 bot/                              # Git repo
-├── .openclaw/                    # OpenClaw state (OPENCLAW_STATE_DIR)
-│   ├── openclaw.json             # Gateway config (version controlled)
+├── .hermes/                      # Hermes state dir
+│   ├── config.yaml               # Gateway config (version controlled)
 │   ├── agents/                   # Runtime state (gitignored)
 │   ├── credentials/              # Auth tokens (gitignored)
 │   └── telegram/                 # Pairing data (gitignored)
@@ -68,7 +68,7 @@ Google Drive (shared persistence)
 └── ari-bot/workspace/            # Real-time sync between local & cloud
 ```
 
-**No ~/.openclaw needed.** `OPENCLAW_STATE_DIR` points to `./.openclaw`
+**Hermes uses `~/.hermes/` by default.** Override by pointing to `./.hermes` in the project.
 
 ---
 
@@ -76,7 +76,7 @@ Google Drive (shared persistence)
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Local gateway | Ready | Run via `openclaw gateway run` |
+| Local gateway | Ready | Run via `hermes gateway` |
 | Cloud deploy | Ready | Fly.io via GitHub Actions |
 | Memory sync | Ready | Real-time via Google Drive |
 | Telegram bots | Ready | @ari_local_bot (dev), @ari_task_bot (prod) |
@@ -173,7 +173,6 @@ See [spec-capabilities.md](plans/spec-capabilities.md) for full skill analysis.
 ```bash
 # Required (use OAuth token, not raw API key!)
 ANTHROPIC_API_KEY          # sk-ant-oat01-... (OAuth from claude setup-token)
-OPENCLAW_STATE_DIR         # ./.openclaw (local) or /app/.openclaw (prod)
 GATEWAY_TOKEN              # Gateway security
 TELEGRAM_BOT_TOKEN         # Telegram bot
 
@@ -191,7 +190,7 @@ ELEVENLABS_API_KEY         # TTS
 
 ### Config File
 
-Single config at `.openclaw/openclaw.json`. Uses relative paths locally, patched to absolute paths by `entrypoint.sh` in production.
+Single config at `.hermes/config.yaml` (YAML format). Uses relative paths locally, patched to absolute paths by `entrypoint.sh` in production.
 
 ---
 
@@ -199,9 +198,8 @@ Single config at `.openclaw/openclaw.json`. Uses relative paths locally, patched
 
 ```bash
 # Local development
-openclaw gateway run                   # Start gateway
-openclaw health                        # Check status
-openclaw doctor                        # Validate config
+hermes gateway                         # Start gateway
+hermes doctor                          # Check status / validate config
 
 # Deployment
 git push                               # Auto-deploy to Fly.io
@@ -209,14 +207,14 @@ fly logs --app ap-assist-agent         # View cloud logs
 fly ssh console --app ap-assist-agent  # SSH into cloud
 
 # Telegram pairing
-openclaw pairing approve telegram <code>
+hermes pairing approve telegram <code>
 ```
 
 ---
 
-## Workspace Files (OpenClaw Standard)
+## Workspace Files (Hermes Agent Standard)
 
-Bot reads these for context. Follows OpenClaw template conventions.
+Bot reads these for context. Follows Hermes Agent template conventions.
 
 | File | About | Purpose |
 |------|-------|---------|
@@ -244,12 +242,12 @@ Bot reads these for context. Follows OpenClaw template conventions.
 | [spec-calendar.md](plans/spec-calendar.md) | Calendar briefings |
 | [spec-sales-coach.md](plans/spec-sales-coach.md) | Sales task coaching |
 | [spec-memory-sync.md](plans/spec-memory-sync.md) | Cloud-local memory sync |
-| [research-fork.md](plans/research-fork.md) | OpenClaw fork feasibility |
+| [research-fork.md](plans/research-fork.md) | Hermes Agent migration feasibility |
 
 ---
 
 ## Links
 
-- **OpenClaw Docs:** https://docs.openclaw.ai
+- **Hermes Agent Docs:** https://hermes-agent.nousresearch.com/docs/
 - **Fly Dashboard:** https://fly.io/apps/ap-assist-agent
 - **Production:** https://assist.andrewpowers.com
