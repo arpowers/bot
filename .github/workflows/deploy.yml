@@ -25,15 +25,20 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Notify bot on failure
+      - name: Notify on failure
         if: failure()
         run: |
-          curl -X POST "https://assist.andrewpowers.com/hooks/agent" \
-            -H "Authorization: Bearer ${{ secrets.WEBHOOK_TOKEN }}" \
+          curl -sf -X POST "${{ secrets.DISCORD_ERROR_WEBHOOK }}" \
             -H "Content-Type: application/json" \
             -d '{
-              "message": "CI deploy failed for commit ${{ github.sha }}. Check https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} - clone repo, diagnose, and push a fix.",
-              "name": "CI Failure",
-              "deliver": true,
-              "channel": "telegram"
+              "content": "🚨 **Deploy failed** — commit `${{ github.sha }}`",
+              "embeds": [{
+                "color": 15548997,
+                "title": "CI Deploy Failure",
+                "description": "Check https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "fields": [
+                  {"name": "Commit", "value": "`${{ github.sha }}`", "inline": true},
+                  {"name": "Branch", "value": "`${{ github.ref_name }}`", "inline": true}
+                ]
+              }]
             }'
