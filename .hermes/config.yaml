@@ -1,0 +1,99 @@
+# AP Bot — Hermes Agent Configuration
+# Model provider: OpenRouter (swap models by changing the model line)
+
+# ── Primary Model ──
+model: "openrouter/deepseek/deepseek-chat"
+
+# ── Agent Settings ──
+agent:
+  reasoning_effort: ""      # empty = medium default
+  max_turns: 90
+
+# ── Terminal ──
+terminal:
+  backend: local
+  cwd: "."
+  timeout: 180
+
+# ── Compression ──
+compression:
+  enabled: true
+  threshold: 0.50
+  target_ratio: 0.20
+  protect_last_n: 20
+  summary_model: "openrouter/google/gemini-2.5-flash-lite"
+
+# ── Memory ──
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  memory_char_limit: 2200
+  user_char_limit: 1375
+
+# ── Auxiliary Models (all via OpenRouter for cost control) ──
+auxiliary:
+  vision:
+    model: "openrouter/google/gemini-3-flash"
+  compression:
+    timeout: 120
+  flush_memories:
+    timeout: 30
+
+# ── Delegation (subagents) ──
+delegation:
+  model: "openrouter/deepseek/deepseek-chat"
+
+# ── TTS ──
+tts:
+  provider: "elevenlabs"
+  elevenlabs:
+    voice_id: "pNInz6obpgDQGcFmaJgB"
+    model_id: "eleven_multilingual_v2"
+
+# ── Skills ──
+skills:
+  external_dirs:
+    - "./skills"
+    - "./workspace/skills"
+
+# ── Session Management ──
+group_sessions_per_user: true
+
+# ── Streaming (Telegram/Discord) ──
+streaming:
+  enabled: true
+  transport: edit
+  edit_interval: 0.3
+  buffer_threshold: 40
+
+# ── Display ──
+display:
+  tool_progress: all
+  show_cost: false
+  streaming: false
+
+# ── Discord ──
+discord:
+  require_mention: true
+
+# ── Timezone ──
+timezone: "America/Los_Angeles"
+
+# ── MCP Servers ──
+# Migrated from workspace/mcporter.json — add servers here
+mcp_servers: {}
+# Example:
+#   github:
+#     command: "npx"
+#     args: ["-y", "@modelcontextprotocol/server-github"]
+#     env:
+#       GITHUB_PERSONAL_ACCESS_TOKEN: "${GITHUB_TOKEN}"
+
+# ── Code Execution ──
+code_execution:
+  timeout: 300
+  max_tool_calls: 50
+
+# ── Security ──
+security:
+  redact_secrets: true
