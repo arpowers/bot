@@ -162,11 +162,16 @@ EOF
   # Symlink memories from workspace (non-fatal)
   if [ -d /app/workspace/memory ]; then
     for f in /app/workspace/memory/*; do
-      [ -f "$f" ] && ln -sf "$f" /root/.hermes/memories/ 2>/dev/null
+      if [ -f "$f" ]; then
+        ln -sf "$f" /root/.hermes/memories/ 2>/dev/null || true
+      fi
     done
     echo "Linked workspace memories"
   fi
-  [ -f /app/workspace/MEMORY.md ] && ln -sf /app/workspace/MEMORY.md /root/.hermes/memories/MEMORY.md 2>/dev/null && echo "Linked MEMORY.md" || true
+  if [ -f /app/workspace/MEMORY.md ]; then
+    ln -sf /app/workspace/MEMORY.md /root/.hermes/memories/MEMORY.md 2>/dev/null || true
+    echo "Linked MEMORY.md"
+  fi
 
   # Install npm deps for workspace skills
   echo "Installing workspace skill dependencies..."
