@@ -29,6 +29,17 @@ update-check.json
 # ClawHub runtime state
 .clawhub/
 
+# Hermes runtime state (keep config.yaml, ignore the rest)
+.hermes/sessions/
+.hermes/logs/
+.hermes/pairing/
+.hermes/image_cache/
+.hermes/audio_cache/
+.hermes/memories/
+.hermes/cron/
+.hermes/.env
+.hermes/auth.json
+
 # Workspace is symlinked to Google Drive (not tracked in git)
 workspace
 workspace.bak/
