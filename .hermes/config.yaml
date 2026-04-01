@@ -79,15 +79,23 @@ discord:
 # ── Timezone ──
 timezone: "America/Los_Angeles"
 
-# ── MCP Servers ──
-# Migrated from workspace/mcporter.json — add servers here
-mcp_servers: {}
-# Example:
-#   github:
-#     command: "npx"
-#     args: ["-y", "@modelcontextprotocol/server-github"]
-#     env:
-#       GITHUB_PERSONAL_ACCESS_TOKEN: "${GITHUB_TOKEN}"
+# ── MCP Servers (migrated from mcporter.json) ──
+mcp_servers:
+  apify:
+    url: "https://mcp.apify.com?tools=actors,docs,apify/rag-web-browser,dev_fusion/Linkedin-Profile-Scraper,harvestapi/linkedin-profile-search,harvestapi/linkedin-post-search,apimaestro/linkedin-posts-search-scraper-no-cookies,apidojo/tweet-scraper,clockworks/tiktok-scraper,clockworks/free-tiktok-scraper"
+    headers:
+      Authorization: "Bearer ${APIFY_API_TOKEN}"
+  prospect:
+    command: "npx"
+    args: ["-y", "@pagelines/prospect-mcp"]
+    env:
+      ENRICHLAYER_API_KEY: "${ENRICHLAYER_API_KEY}"
+      APIFY_API_TOKEN: "${APIFY_API_TOKEN}"
+  ticktick:
+    command: "npx"
+    args: ["-y", "ticktick-mcp-server"]
+    env:
+      TICKTICK_ACCESS_TOKEN: "${TICKTICK_ACCESS_TOKEN}"
 
 # ── Code Execution ──
 code_execution:
